@@ -3,7 +3,10 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useGame } from '@/app/providers'
-import { User, Edit3, Save, Camera, Award, Gem, Heart, Zap, Wallet, Plus, Minus, Settings } from 'lucide-react'
+import { usePrivy } from '@privy-io/react-auth'
+import { useEnhancedAuth } from '@/hooks/useEnhancedAuth'
+import { useAvalancheWallet } from '@/hooks/useAvalancheWallet'
+import { User, Edit3, Save, Camera, Award, Gem, Heart, Zap, Wallet, Plus, Minus, Settings, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 
 const achievements = [
@@ -28,9 +31,11 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [editedName, setEditedName] = useState('')
   const [selectedAvatar, setSelectedAvatar] = useState('')
-  const [walletBalance, setWalletBalance] = useState(12.45)
 
   const { gameState, updateGameState } = useGame()
+  const { ready, authenticated, logout } = usePrivy()
+  const { hasAvalancheWallet } = useEnhancedAuth()
+  const { walletInfo, isLoading, error, refreshBalance } = useAvalancheWallet()
 
   const handleEditToggle = () => {
     if (isEditing) {
@@ -54,6 +59,44 @@ export default function ProfilePage() {
 
   const unlockedAchievements = achievements.filter(a => a.unlocked)
   const totalAchievements = achievements.length
+
+  // Wallet action handlers
+  const handleAddFunds = () => {
+    if (walletInfo?.network === 'fuji') {
+      window.open('https://faucet.avax.network/', '_blank')
+    } else {
+      window.open('https://www.coinbase.com/buy/avalanche', '_blank')
+    }
+  }
+
+  const handleViewExplorer = () => {
+    if (walletInfo?.explorerUrl) {
+      window.open(walletInfo.explorerUrl, '_blank')
+    }
+  }
+
+  const handleDisconnectWallet = async () => {
+    try {
+      await logout()
+    } catch (error) {
+      console.error('Disconnect failed:', error)
+    }
+  }
+
+  // Get wallet display values
+  const getWalletBalance = () => {
+    if (isLoading) return '...'
+    if (error || !walletInfo) return '0.0000'
+    return walletInfo.balance
+  }
+
+  const getWalletBalanceUSD = () => {
+    if (isLoading || error || !walletInfo) return '0.00'
+    const balance = parseFloat(walletInfo.balance)
+    return (balance * 42.5).toFixed(2) // Approximate AVAX price
+  }
+
+  const isWalletConnected = ready && authenticated && hasAvalancheWallet && walletInfo
 
   return (
     <div
@@ -334,67 +377,145 @@ export default function ProfilePage() {
             className="lg:col-span-1 space-y-8"
           >
             {/* Wallet Panel */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-green-400 shadow-lg shadow-green-500/20 relative overflow-hidden">
-              <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-green-400 opacity-60" />
-              <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-green-400 opacity-60" />
+            <div className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 shadow-lg relative overflow-hidden ${
+              isWalletConnected 
+                ? 'border-green-400 shadow-green-500/20' 
+                : 'border-red-400 shadow-red-500/20'
+            }`}>
+              <div className={`absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 opacity-60 ${
+                isWalletConnected ? 'border-green-400' : 'border-red-400'
+              }`} />
+              <div className={`absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 opacity-60 ${
+                isWalletConnected ? 'border-green-400' : 'border-red-400'
+              }`} />
 
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-white flex items-center">
-                  <Wallet className="w-6 h-6 mr-2 text-green-400" />
+                  <Wallet className={`w-6 h-6 mr-2 ${isWalletConnected ? 'text-green-400' : 'text-red-400'}`} />
                   Wallet
                 </h3>
                 <div className="flex items-center">
-                  <div className="w-3 h-3 bg-green-400 rounded-full mr-2 animate-pulse" />
-                  <span className="text-green-300 text-sm font-semibold">Connected</span>
+                  {isWalletConnected ? (
+                    <>
+                      <div className="w-3 h-3 bg-green-400 rounded-full mr-2 animate-pulse" />
+                      <span className="text-green-300 text-sm font-semibold">Connected</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-3 h-3 bg-red-400 rounded-full mr-2" />
+                      <span className="text-red-300 text-sm font-semibold">Disconnected</span>
+                    </>
+                  )}
                 </div>
               </div>
+
+              {/* Error Display */}
+              {error && (
+                <div className="bg-red-500/10 border border-red-400/30 rounded-xl p-3 mb-4">
+                  <div className="text-red-300 text-sm font-semibold mb-1">Wallet Error</div>
+                  <div className="text-red-400 text-xs">{error}</div>
+                </div>
+              )}
 
               {/* AVAX Balance */}
               <div className="bg-green-500/10 border border-green-400/30 rounded-xl p-4 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-green-300 font-semibold">AVAX Balance</span>
-                  <span className="text-2xl font-bold text-white">{walletBalance.toFixed(2)}</span>
+                  <div className="flex items-center">
+                    {isLoading ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-400 mr-2"></div>
+                    ) : error ? (
+                      <span className="text-red-400 text-sm mr-2">Error</span>
+                    ) : null}
+                    <span className="text-2xl font-bold text-white">{getWalletBalance()}</span>
+                  </div>
                 </div>
-                <div className="text-gray-400 text-sm">≈ ${(walletBalance * 42.5).toFixed(2)} USD</div>
+                <div className="flex items-center justify-between">
+                  <div className="text-gray-400 text-sm">≈ ${getWalletBalanceUSD()} USD</div>
+                  {walletInfo?.networkName && (
+                    <div className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">
+                      {walletInfo.networkName}
+                    </div>
+                  )}
+                </div>
+                {walletInfo?.address && (
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-xs text-gray-500">
+                      {walletInfo.address.slice(0, 6)}...{walletInfo.address.slice(-4)}
+                    </span>
+                    <button
+                      onClick={handleViewExplorer}
+                      className="text-xs text-blue-400 hover:text-blue-300 flex items-center"
+                    >
+                      <ExternalLink className="w-3 h-3 mr-1" />
+                      View
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Wallet Actions */}
               <div className="space-y-3">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg"
-                >
-                  <Plus className="w-5 h-5 mr-2" />
-                  Add Funds
-                </motion.button>
+                {isWalletConnected ? (
+                  <>
+                    <motion.button
+                      onClick={handleAddFunds}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg"
+                    >
+                      <Plus className="w-5 h-5 mr-2" />
+                      {walletInfo?.network === 'fuji' ? 'Get Test AVAX' : 'Add Funds'}
+                    </motion.button>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="bg-blue-500/20 border border-blue-400/30 hover:bg-blue-500/30 text-blue-300 font-semibold py-2 px-3 rounded-lg transition-all duration-300 flex items-center justify-center"
-                  >
-                    <Minus className="w-4 h-4 mr-1" />
-                    Withdraw
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="bg-gray-600/20 border border-gray-500/30 hover:bg-gray-600/30 text-gray-300 font-semibold py-2 px-3 rounded-lg transition-all duration-300 flex items-center justify-center"
-                  >
-                    <Settings className="w-4 h-4 mr-1" />
-                    Settings
-                  </motion.button>
-                </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.button
+                        onClick={refreshBalance}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        disabled={isLoading}
+                        className="bg-blue-500/20 border border-blue-400/30 hover:bg-blue-500/30 disabled:opacity-50 text-blue-300 font-semibold py-2 px-3 rounded-lg transition-all duration-300 flex items-center justify-center"
+                      >
+                        <div className={`w-4 h-4 mr-1 ${isLoading ? 'animate-spin' : ''}`}>
+                          <Settings className="w-4 h-4" />
+                        </div>
+                        Refresh
+                      </motion.button>
+                      <motion.button
+                        onClick={handleViewExplorer}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        disabled={!walletInfo?.explorerUrl}
+                        className="bg-gray-600/20 border border-gray-500/30 hover:bg-gray-600/30 disabled:opacity-50 text-gray-300 font-semibold py-2 px-3 rounded-lg transition-all duration-300 flex items-center justify-center"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-1" />
+                        Explorer
+                      </motion.button>
+                    </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-red-500/20 border border-red-400/30 hover:bg-red-500/30 text-red-300 font-semibold py-2 px-4 rounded-lg transition-all duration-300"
-                >
-                  Disconnect Wallet
-                </motion.button>
+                    <motion.button
+                      onClick={handleDisconnectWallet}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full bg-red-500/20 border border-red-400/30 hover:bg-red-500/30 text-red-300 font-semibold py-2 px-4 rounded-lg transition-all duration-300"
+                    >
+                      Disconnect Wallet
+                    </motion.button>
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <Wallet className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                    <p className="text-gray-400 mb-4">No wallet connected</p>
+                    <motion.button
+                      onClick={() => window.location.href = '/auth'}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300"
+                    >
+                      Connect Wallet
+                    </motion.button>
+                  </div>
+                )}
               </div>
             </div>
 
