@@ -14,7 +14,7 @@ import { Wallet } from 'lucide-react'
 export default function AuthPage() {
   const router = useRouter()
   const { ready, authenticated } = usePrivy()
-  const { hasAvalancheWallet, walletCreationStep } = useEnhancedAuth()
+  const { hasAvalancheWallet } = useEnhancedAuth()
   const { login, gameState } = useGame()
   const redirectingRef = useRef(false)
 

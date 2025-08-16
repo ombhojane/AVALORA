@@ -6,7 +6,7 @@ import { useGame } from '@/app/providers'
 import { usePrivy } from '@privy-io/react-auth'
 import { useEnhancedAuth } from '@/hooks/useEnhancedAuth'
 import { useAvalancheWallet } from '@/hooks/useAvalancheWallet'
-import { User, Edit3, Save, Camera, Award, Gem, Heart, Zap, Wallet, Plus, Minus, Settings, ExternalLink } from 'lucide-react'
+import { User, Edit3, Save, Camera, Award, Gem, Heart, Zap, Wallet, Plus, Settings, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 
 const achievements = [
@@ -31,6 +31,8 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [editedName, setEditedName] = useState('')
   const [selectedAvatar, setSelectedAvatar] = useState('')
+  const [saveSuccess, setSaveSuccess] = useState(false)
+  const [testClicks, setTestClicks] = useState(0)
 
   const { gameState, updateGameState } = useGame()
   const { ready, authenticated, logout } = usePrivy()
@@ -38,23 +40,44 @@ export default function ProfilePage() {
   const { walletInfo, isLoading, error, refreshBalance } = useAvalancheWallet()
 
   const handleEditToggle = () => {
+    console.log('Edit button clicked! Current editing state:', isEditing)
+    
     if (isEditing) {
-      // Save changes - fix the nested player object update
+      // Validate name
+      const trimmedName = editedName.trim()
+      if (!trimmedName || trimmedName.length < 2) {
+        alert('Name must be at least 2 characters long')
+        return
+      }
+      
+      // Save changes - update only the player object
       const updatedPlayer = {
         ...gameState.player,
-        name: editedName || gameState.player.name,
+        name: trimmedName,
         avatar: selectedAvatar || gameState.player.avatar
       }
+      
+      console.log('Saving profile changes:', updatedPlayer)
+      
+      // Update only the player part of the game state
       updateGameState({
-        ...gameState,
         player: updatedPlayer
       })
+      
+      // Show success feedback
+      setSaveSuccess(true)
+      setTimeout(() => setSaveSuccess(false), 2000)
+      
+      console.log('Profile updated:', updatedPlayer)
     } else {
-      // Start editing
+      // Start editing - initialize form with current values
+      console.log('Starting edit mode with current player:', gameState.player)
       setEditedName(gameState.player.name)
       setSelectedAvatar(gameState.player.avatar)
+      setSaveSuccess(false)
     }
     setIsEditing(!isEditing)
+    console.log('New editing state will be:', !isEditing)
   }
 
   const unlockedAchievements = achievements.filter(a => a.unlocked)
@@ -111,18 +134,18 @@ export default function ProfilePage() {
       {/* Dark overlay for readability */}
       <div className="absolute inset-0 bg-black bg-opacity-85" />
 
-      {/* Anime-style floating elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Anime-style floating elements - Fixed positions to prevent hydration mismatch */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         {/* Floating sakura petals */}
         {[...Array(20)].map((_, i) => (
           <div
             key={`petal-${i}`}
             className="absolute animate-float"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 8}s`,
-              animationDuration: `${4 + Math.random() * 6}s`
+              left: `${(i * 17 + 23) % 100}%`,
+              top: `${(i * 13 + 31) % 100}%`,
+              animationDelay: `${(i * 0.4) % 8}s`,
+              animationDuration: `${4 + (i % 6)}s`
             }}
           >
             <div className="w-3 h-3 bg-pink-300 rounded-full opacity-20 transform rotate-45" />
@@ -135,9 +158,9 @@ export default function ProfilePage() {
             key={`sparkle-${i}`}
             className="absolute animate-pulse"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
+              left: `${(i * 23 + 17) % 100}%`,
+              top: `${(i * 19 + 29) % 100}%`,
+              animationDelay: `${(i * 0.25) % 3}s`,
             }}
           >
             <div className="w-1 h-1 bg-yellow-300 rounded-full opacity-40" />
@@ -145,7 +168,7 @@ export default function ProfilePage() {
         ))}
       </div>
 
-      <div className="container mx-auto px-4 py-8 relative z-10">
+      <div className="container mx-auto px-4 py-8 relative z-10" style={{ pointerEvents: 'auto' }}>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -160,6 +183,7 @@ export default function ProfilePage() {
           </p>
         </motion.div>
 
+       
         {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Card */}
@@ -170,23 +194,23 @@ export default function ProfilePage() {
           >
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-purple-400 shadow-lg shadow-purple-500/20 relative overflow-hidden group">
               {/* Anime-style background pattern */}
-              <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
-                <Image src="/WebsiteAssets/AncientDesign.png" alt="" fill className="object-cover" />
+              <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300 z-0">
+                <Image src="/WebsiteAssets/AncientDesign.png" alt="" fill sizes="400px" className="object-cover" />
               </div>
 
               {/* Manga corners with glow */}
-              <div className="absolute top-2 left-2 w-8 h-8 border-l-3 border-t-3 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute bottom-2 right-2 w-8 h-8 border-r-3 border-b-3 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute top-2 left-2 w-8 h-8 border-l-3 border-t-3 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity duration-300 z-0" />
+              <div className="absolute bottom-2 right-2 w-8 h-8 border-r-3 border-b-3 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity duration-300 z-0" />
 
               {/* Anime speed lines on hover */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none">
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none z-0">
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent transform -rotate-12" />
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent transform rotate-12" />
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent transform -rotate-6" />
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent transform rotate-6" />
               </div>
 
-              <div className="text-center mb-6 relative z-10">
+              <div className="text-center mb-6 relative z-20">
                 <div className="relative inline-block">
                   <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 border-purple-400 shadow-lg relative group">
                     <Image
@@ -211,12 +235,19 @@ export default function ProfilePage() {
                 </div>
 
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    className="text-2xl font-bold text-white bg-gray-700 border-2 border-purple-400 rounded-lg px-3 py-1 text-center focus:border-purple-300 focus:outline-none transition-colors"
-                  />
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={editedName}
+                      onChange={(e) => setEditedName(e.target.value)}
+                      placeholder="Enter your name"
+                      maxLength={20}
+                      className="text-2xl font-bold text-white bg-gray-700 border-2 border-purple-400 rounded-lg px-3 py-1 text-center focus:border-purple-300 focus:outline-none transition-colors w-full"
+                    />
+                    <div className="text-xs text-gray-400 text-center">
+                      {editedName.length}/20 characters
+                    </div>
+                  </div>
                 ) : (
                   <h2 className="text-2xl font-bold text-white mb-2">{gameState.player.name}</h2>
                 )}
@@ -225,7 +256,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Stats */}
-              <div className="space-y-4 mb-6">
+              <div className="space-y-4 mb-6 relative z-20">
                 <div className="flex items-center justify-between p-3 bg-red-500/10 border border-red-400/30 rounded-xl">
                   <div className="flex items-center">
                     <Heart className="w-5 h-5 text-red-400 mr-2" />
@@ -251,24 +282,75 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <motion.button
-                onClick={handleEditToggle}
-                className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
+              {/* Success Message */}
+              {saveSuccess && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="bg-green-500/10 border border-green-400/30 rounded-xl p-3 mb-4 text-center"
+                >
+                  <div className="text-green-300 text-sm font-semibold">✅ Profile updated successfully!</div>
+                </motion.div>
+              )}
+
+              {/* Button area with proper z-index */}
+              <div className="relative z-30">
+              
+               
+
+              
+
                 {isEditing ? (
-                  <>
-                    <Save className="w-5 h-5 mr-2" />
-                    Save Changes
-                  </>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleEditToggle()
+                      }}
+                      className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg cursor-pointer"
+                      style={{ pointerEvents: 'auto' }}
+                    >
+                      <Save className="w-5 h-5 mr-2" />
+                      Save
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        console.log('Cancel button clicked')
+                        setIsEditing(false)
+                        setEditedName(gameState.player.name)
+                        setSelectedAvatar(gameState.player.avatar)
+                        setSaveSuccess(false)
+                      }}
+                      className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg cursor-pointer"
+                      style={{ pointerEvents: 'auto' }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 ) : (
-                  <>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      console.log('EDIT BUTTON CLICKED!')
+                      handleEditToggle()
+                    }}
+                    className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center shadow-lg cursor-pointer border-2 border-yellow-400"
+                    style={{ 
+                      pointerEvents: 'auto',
+                      position: 'relative',
+                      zIndex: 9999
+                    }}
+                  >
                     <Edit3 className="w-5 h-5 mr-2" />
                     Edit Profile
-                  </>
+                  </button>
                 )}
-              </motion.button>
+              </div>
             </div>
           </motion.div>
 
@@ -293,7 +375,7 @@ export default function ProfilePage() {
                     <motion.div
                       key={index}
                       onClick={() => setSelectedAvatar(avatar)}
-                      className={`cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${selectedAvatar === avatar
+                      className={`cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 relative ${selectedAvatar === avatar
                         ? 'border-blue-400 scale-105 shadow-lg shadow-blue-500/20'
                         : 'border-gray-600 hover:border-gray-400'
                         }`}
@@ -307,6 +389,13 @@ export default function ProfilePage() {
                         height={100}
                         className="w-full h-24 object-cover"
                       />
+                      {selectedAvatar === avatar && (
+                        <div className="absolute inset-0 bg-blue-400/20 flex items-center justify-center">
+                          <div className="w-8 h-8 bg-blue-400 rounded-full flex items-center justify-center">
+                            <div className="w-4 h-4 bg-white rounded-full" />
+                          </div>
+                        </div>
+                      )}
                     </motion.div>
                   ))}
                 </div>

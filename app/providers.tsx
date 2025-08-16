@@ -56,7 +56,12 @@ function GameProvider({ children }: { children: ReactNode }) {
   const [gameState, setGameState] = useState<GameState>(initialGameState)
 
   const updateGameState = (updates: Partial<GameState>) => {
-    setGameState(prev => ({ ...prev, ...updates }))
+    console.log('updateGameState called with:', updates)
+    setGameState(prev => {
+      const newState = { ...prev, ...updates }
+      console.log('Game state updated from:', prev, 'to:', newState)
+      return newState
+    })
   }
 
   const login = (playerData: any) => {
