@@ -15,6 +15,12 @@ interface GameState {
   }
   isAuthenticated: boolean
   currentChapter: number
+  questProgress: {
+    completedChapters: number[]
+    unlockedChapters: number[]
+    dailyBattleAttempts: number
+    lastBattleDate: string
+  }
 }
 
 interface GameContextType {
@@ -34,10 +40,16 @@ const initialGameState: GameState = {
     maxHp: 100,
     gems: 0,
     xp: 0,
-    avatar: '/Artworks-Characters/MainCharacter.png'
+    avatar: '/Artworks-Characters/AVALANCH.png'
   },
   isAuthenticated: false,
-  currentChapter: 1
+  currentChapter: 1,
+  questProgress: {
+    completedChapters: [],
+    unlockedChapters: [0],
+    dailyBattleAttempts: 3,
+    lastBattleDate: new Date().toDateString()
+  }
 }
 
 function GameProvider({ children }: { children: ReactNode }) {

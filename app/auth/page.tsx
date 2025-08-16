@@ -23,12 +23,12 @@ export default function AuthPage() {
   // Handle auto-login and redirect when wallet is ready
   useEffect(() => {
     console.log('Auth page effect:', { ready, authenticated, hasAvalancheWallet, gameAuthenticated: gameState.isAuthenticated, redirecting: redirectingRef.current })
-    
+
     if (ready && authenticated && hasAvalancheWallet) {
       if (!gameState.isAuthenticated && !redirectingRef.current) {
         console.log('Starting auto-login process')
         redirectingRef.current = true
-        
+
         // Auto-login to game
         login({
           name: 'Avalanche Warrior',
@@ -77,7 +77,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen flex items-center justify-center relative"
       style={{
         backgroundImage: 'url(/ImageAssets/RedSky.jpg)',
@@ -87,7 +87,7 @@ export default function AuthPage() {
     >
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-80" />
-      
+
       {/* Floating anime particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(10)].map((_, i) => (
@@ -105,7 +105,7 @@ export default function AuthPage() {
           </div>
         ))}
       </div>
-      
+
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

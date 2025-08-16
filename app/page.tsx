@@ -9,6 +9,7 @@ import { LoreSection } from '@/components/landing/LoreSection'
 import { FeaturesSection } from '@/components/landing/FeaturesSection'
 import { ArtworkSection } from '@/components/landing/ArtworkSection'
 import { JoinSection } from '@/components/landing/JoinSection'
+import BackToTop from '@/components/BackToTop'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -51,6 +52,7 @@ export default function Home() {
       <FeaturesSection />
       <ArtworkSection />
       <JoinSection />
+      <BackToTop />
     </div>
   )
 }

@@ -66,22 +66,81 @@ Players progress through comic-inspired story chapters, defeat enemies via typin
 
 <div align="center">
 
-| Character | Role | Element | Description |
-|-----------|------|---------|-------------|
-| **AVAXIM** | Emperor of AVALAND | Lightning | Supreme ruler with unmatched blockchain mastery |
-| **AVALANCH** | Ambassador of AVALORA | Ice | Trusted guide between mortal and digital realms |
-| **Cutter** | Blade Master | Steel | Lightning-fast warrior with precision strikes |
-| **Ghosty** | Phantom Hacker | Shadow | Mysterious entity phasing between realms |
+<table>
+<tr>
+<td align="center" width="200">
+<img src="public/Artworks-Characters/AVAXIM - EMPEROR OF AVALAND.png" alt="AVAXIM" width="120" height="120" style="border-radius: 10px; border: 2px solid #E84142;"/>
+<br><b>AVAXIM</b><br>
+<i>Emperor of AVALAND</i><br>
+⚡ Lightning Element<br>
+<small>Supreme ruler with unmatched blockchain mastery</small>
+</td>
+<td align="center" width="200">
+<img src="public/Artworks-Characters/AVALANCH.png" alt="AVALANCH" width="120" height="120" style="border-radius: 10px; border: 2px solid #4FC3F7;"/>
+<br><b>AVALANCH</b><br>
+<i>Ambassador of AVALORA</i><br>
+❄️ Ice Element<br>
+<small>Trusted guide between mortal and digital realms</small>
+</td>
+</tr>
+<tr>
+<td align="center" width="200">
+<img src="public/Artworks-Characters/Cutter.png" alt="Cutter" width="120" height="120" style="border-radius: 10px; border: 2px solid #9E9E9E;"/>
+<br><b>Cutter</b><br>
+<i>Blade Master</i><br>
+⚔️ Steel Element<br>
+<small>Lightning-fast warrior with precision strikes</small>
+</td>
+<td align="center" width="200">
+<img src="public/Artworks-Characters/Ghosty.png" alt="Ghosty" width="120" height="120" style="border-radius: 10px; border: 2px solid #9C27B0;"/>
+<br><b>Ghosty</b><br>
+<i>Phantom Hacker</i><br>
+🌙 Shadow Element<br>
+<small>Mysterious entity phasing between realms</small>
+</td>
+</tr>
+</table>
 
 </div>
 
 ### 😈 **Villains & Threats**
 
 The realm faces constant threats from the **Meron Forces** - dark entities seeking to corrupt the network:
-- **Meron Devil**: Chaos Bringer
-- **Meron Dragon**: Ancient Terror  
-- **Meron Emperor**: Dark Ruler
-- **Meron Witch**: Spell Weaver
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="200">
+<img src="public/VillainAssets/MeronDevil.jpg" alt="Meron Devil" width="100" height="100" style="border-radius: 10px; border: 2px solid #F44336;"/>
+<br><b>Meron Devil</b><br>
+<i>Chaos Bringer</i><br>
+🔥 Corruption Element
+</td>
+<td align="center" width="200">
+<img src="public/VillainAssets/MeronDragon.jpg" alt="Meron Dragon" width="100" height="100" style="border-radius: 10px; border: 2px solid #FF5722;"/>
+<br><b>Meron Dragon</b><br>
+<i>Ancient Terror</i><br>
+🐉 Destruction Element
+</td>
+</tr>
+<tr>
+<td align="center" width="200">
+<img src="public/VillainAssets/MeronEmperor.jpg" alt="Meron Emperor" width="100" height="100" style="border-radius: 10px; border: 2px solid #9C27B0;"/>
+<br><b>Meron Emperor</b><br>
+<i>Dark Ruler</i><br>
+👑 Dominion Element
+</td>
+<td align="center" width="200">
+<img src="public/VillainAssets/MeronWitch.jpg" alt="Meron Witch" width="100" height="100" style="border-radius: 10px; border: 2px solid #673AB7;"/>
+<br><b>Meron Witch</b><br>
+<i>Spell Weaver</i><br>
+🔮 Dark Magic Element
+</td>
+</tr>
+</table>
+
+</div>
 
 ---
 
@@ -119,7 +178,7 @@ The realm faces constant threats from the **Meron Forces** - dark entities seeki
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/avalora.git
+   git clone https://github.com/jishanahmed-shaikh/avalora.git
    cd AVALORA
    ```
 
