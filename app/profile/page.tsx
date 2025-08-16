@@ -19,7 +19,9 @@ const avatarOptions = [
   '/Artworks-Characters/AVAXIM - EMPEROR OF AVALAND.png',
   '/Artworks-Characters/AVALANCH.png',
   '/Artworks-Characters/Cutter.png',
-  '/Artworks-Characters/Ghosty.png'
+  '/Artworks-Characters/Ghosty.png',
+  '/Artworks-Characters/GoldenSnake.png',
+  '/Artworks-Characters/PandaGold.png'
 ]
 
 export default function ProfilePage() {
@@ -27,18 +29,20 @@ export default function ProfilePage() {
   const [editedName, setEditedName] = useState('')
   const [selectedAvatar, setSelectedAvatar] = useState('')
   const [walletBalance, setWalletBalance] = useState(12.45)
-  
+
   const { gameState, updateGameState } = useGame()
 
   const handleEditToggle = () => {
     if (isEditing) {
-      // Save changes
+      // Save changes - fix the nested player object update
+      const updatedPlayer = {
+        ...gameState.player,
+        name: editedName || gameState.player.name,
+        avatar: selectedAvatar || gameState.player.avatar
+      }
       updateGameState({
-        player: {
-          ...gameState.player,
-          name: editedName || gameState.player.name,
-          avatar: selectedAvatar || gameState.player.avatar
-        }
+        ...gameState,
+        player: updatedPlayer
       })
     } else {
       // Start editing
@@ -52,7 +56,7 @@ export default function ProfilePage() {
   const totalAchievements = achievements.length
 
   return (
-    <div 
+    <div
       className="min-h-screen relative overflow-hidden"
       style={{
         backgroundImage: 'url(/ImageAssets/Tree.png)',
@@ -63,7 +67,7 @@ export default function ProfilePage() {
     >
       {/* Dark overlay for readability */}
       <div className="absolute inset-0 bg-black bg-opacity-85" />
-      
+
       {/* Anime-style floating elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating sakura petals */}
@@ -81,7 +85,7 @@ export default function ProfilePage() {
             <div className="w-3 h-3 bg-pink-300 rounded-full opacity-20 transform rotate-45" />
           </div>
         ))}
-        
+
         {/* Floating sparkles */}
         {[...Array(12)].map((_, i) => (
           <div
@@ -126,11 +130,11 @@ export default function ProfilePage() {
               <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
                 <Image src="/WebsiteAssets/AncientDesign.png" alt="" fill className="object-cover" />
               </div>
-              
+
               {/* Manga corners with glow */}
               <div className="absolute top-2 left-2 w-8 h-8 border-l-3 border-t-3 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute bottom-2 right-2 w-8 h-8 border-r-3 border-b-3 border-purple-400 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
-              
+
               {/* Anime speed lines on hover */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none">
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent transform -rotate-12" />
@@ -138,7 +142,7 @@ export default function ProfilePage() {
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent transform -rotate-6" />
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent transform rotate-6" />
               </div>
-              
+
               <div className="text-center mb-6 relative z-10">
                 <div className="relative inline-block">
                   <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 border-purple-400 shadow-lg relative group">
@@ -173,7 +177,7 @@ export default function ProfilePage() {
                 ) : (
                   <h2 className="text-2xl font-bold text-white mb-2">{gameState.player.name}</h2>
                 )}
-                
+
                 <p className="text-purple-300 font-semibold">Level {gameState.player.level} Warrior</p>
               </div>
 
@@ -236,7 +240,7 @@ export default function ProfilePage() {
               >
                 <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-blue-400 opacity-60" />
                 <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-blue-400 opacity-60" />
-                
+
                 <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
                   <User className="w-6 h-6 mr-2 text-blue-400" />
                   Choose Avatar
@@ -246,11 +250,10 @@ export default function ProfilePage() {
                     <motion.div
                       key={index}
                       onClick={() => setSelectedAvatar(avatar)}
-                      className={`cursor-pointer rounded-xl overflow-hidden border-3 transition-all duration-300 ${
-                        selectedAvatar === avatar
-                          ? 'border-blue-400 scale-105 shadow-lg shadow-blue-500/20'
-                          : 'border-gray-600 hover:border-gray-400'
-                      }`}
+                      className={`cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-300 ${selectedAvatar === avatar
+                        ? 'border-blue-400 scale-105 shadow-lg shadow-blue-500/20'
+                        : 'border-gray-600 hover:border-gray-400'
+                        }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -276,7 +279,7 @@ export default function ProfilePage() {
             >
               <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-yellow-400 opacity-60" />
               <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-yellow-400 opacity-60" />
-              
+
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-white flex items-center">
                   <Award className="w-6 h-6 mr-2 text-yellow-400" />
@@ -294,23 +297,20 @@ export default function ProfilePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 * index }}
-                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${
-                      achievement.unlocked
-                        ? 'border-green-400 bg-green-500/10 shadow-green-500/20'
-                        : 'border-gray-600 bg-gray-800/50'
-                    }`}
+                    className={`p-4 rounded-xl border-2 transition-all duration-300 ${achievement.unlocked
+                      ? 'border-green-400 bg-green-500/10 shadow-green-500/20'
+                      : 'border-gray-600 bg-gray-800/50'
+                      }`}
                   >
                     <div className="flex items-center mb-2">
                       <span className="text-2xl mr-3">{achievement.icon}</span>
-                      <h4 className={`font-bold ${
-                        achievement.unlocked ? 'text-green-300' : 'text-gray-400'
-                      }`}>
+                      <h4 className={`font-bold ${achievement.unlocked ? 'text-green-300' : 'text-gray-400'
+                        }`}>
                         {achievement.name}
                       </h4>
                     </div>
-                    <p className={`text-sm ${
-                      achievement.unlocked ? 'text-gray-300' : 'text-gray-500'
-                    }`}>
+                    <p className={`text-sm ${achievement.unlocked ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
                       {achievement.description}
                     </p>
                     {achievement.unlocked && (
@@ -337,7 +337,7 @@ export default function ProfilePage() {
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-green-400 shadow-lg shadow-green-500/20 relative overflow-hidden">
               <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-green-400 opacity-60" />
               <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-green-400 opacity-60" />
-              
+
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-white flex items-center">
                   <Wallet className="w-6 h-6 mr-2 text-green-400" />
@@ -368,7 +368,7 @@ export default function ProfilePage() {
                   <Plus className="w-5 h-5 mr-2" />
                   Add Funds
                 </motion.button>
-                
+
                 <div className="grid grid-cols-2 gap-3">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
@@ -387,7 +387,7 @@ export default function ProfilePage() {
                     Settings
                   </motion.button>
                 </div>
-                
+
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -402,12 +402,12 @@ export default function ProfilePage() {
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-orange-400 shadow-lg shadow-orange-500/20 relative overflow-hidden">
               <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-orange-400 opacity-60" />
               <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-orange-400 opacity-60" />
-              
+
               <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
                 <Award className="w-6 h-6 mr-2 text-orange-400" />
                 Statistics
               </h3>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center bg-orange-500/10 border border-orange-400/30 rounded-xl p-3">
                   <div className="text-2xl font-bold text-orange-400 mb-1">5</div>

@@ -51,7 +51,7 @@ export function HeroSection() {
             className="mb-8"
           >
             <Image
-              src="/LogoAssets/MainLogoWithoutBG.png"
+              src="/LogoAssets/MainLogoWithoutBG-Photoroom.png"
               alt="AVALORA Logo"
               width={250}
               height={150}
