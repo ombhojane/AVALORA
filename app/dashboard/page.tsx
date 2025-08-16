@@ -5,6 +5,11 @@ import { useGame } from '@/app/providers'
 import { useRouter } from 'next/navigation'
 import { Sword, Target, ShoppingBag, Trophy, User, BookOpen, Heart, Gem, Wallet, Plus } from 'lucide-react'
 import Image from 'next/image'
+import { usePrivy } from '@privy-io/react-auth'
+import { useEnhancedAuth } from '@/hooks/useEnhancedAuth'
+import WalletDisplay from '@/components/wallet/wallet-display'
+import WalletCreation from '@/components/wallet/wallet-creation'
+import LoginButton from '@/components/auth/login-button'
 
 const quickLinks = [
   { 
@@ -60,6 +65,8 @@ const quickLinks = [
 export default function DashboardPage() {
   const { gameState } = useGame()
   const router = useRouter()
+  const { ready, authenticated } = usePrivy()
+  const { hasAvalancheWallet, walletCreationStep } = useEnhancedAuth()
 
   const handleNavigation = (href: string) => {
     router.push(href)
@@ -116,41 +123,28 @@ export default function DashboardPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-purple-400 shadow-lg shadow-purple-500/20 min-w-[280px]"
+            className="min-w-[320px]"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-white flex items-center">
-                <div className="w-3 h-3 bg-green-400 rounded-full mr-2 animate-pulse" />
-                Wallet Connected
-              </h3>
-              <div className="w-6 h-6 border-l-2 border-t-2 border-purple-400 opacity-60" />
-            </div>
-            
-            <div className="space-y-3">
-              <div className="bg-purple-500/10 border border-purple-400/30 rounded-xl p-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-purple-300 text-sm">AVAX Balance</span>
-                  <span className="text-white font-bold">12.45 AVAX</span>
+            {!ready ? (
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-gray-600 shadow-lg">
+                <div className="animate-pulse">
+                  <div className="h-4 bg-gray-600 rounded w-1/3 mb-4"></div>
+                  <div className="h-8 bg-gray-600 rounded w-2/3 mb-2"></div>
+                  <div className="h-4 bg-gray-600 rounded w-1/2"></div>
                 </div>
               </div>
-              
-              <div className="flex space-x-2">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-2 px-3 rounded-lg text-sm transition-all duration-300"
-                >
-                  Add Funds
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-3 rounded-lg text-sm transition-all duration-300"
-                >
-                  Disconnect
-                </motion.button>
+            ) : !authenticated ? (
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-red-400 shadow-lg shadow-red-500/20">
+                <div className="text-center">
+                  <h3 className="text-lg font-bold text-white mb-4">Connect Your Wallet</h3>
+                  <LoginButton />
+                </div>
               </div>
-            </div>
+            ) : !hasAvalancheWallet ? (
+              <WalletCreation />
+            ) : (
+              <WalletDisplay />
+            )}
           </motion.div>
         </div>
 

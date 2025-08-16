@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, ReactNode } from 'react'
+import PrivyProviderWrapper from '@/components/providers/privy-provider'
 
 interface GameState {
   player: {
@@ -39,7 +40,7 @@ const initialGameState: GameState = {
   currentChapter: 1
 }
 
-export function Providers({ children }: { children: ReactNode }) {
+function GameProvider({ children }: { children: ReactNode }) {
   const [gameState, setGameState] = useState<GameState>(initialGameState)
 
   const updateGameState = (updates: Partial<GameState>) => {
@@ -62,6 +63,16 @@ export function Providers({ children }: { children: ReactNode }) {
     <GameContext.Provider value={{ gameState, updateGameState, login, logout }}>
       {children}
     </GameContext.Provider>
+  )
+}
+
+export function Providers({ children }: { children: ReactNode }) {
+  return (
+    <PrivyProviderWrapper>
+      <GameProvider>
+        {children}
+      </GameProvider>
+    </PrivyProviderWrapper>
   )
 }
 
