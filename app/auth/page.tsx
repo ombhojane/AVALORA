@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { usePrivy } from '@privy-io/react-auth'
@@ -9,6 +9,7 @@ import { useGame } from '@/app/providers'
 import WalletDisplay from '@/components/wallet/wallet-display'
 import WalletCreation from '@/components/wallet/wallet-creation'
 import LoginButton from '@/components/auth/login-button'
+import { Wallet } from 'lucide-react'
 
 export default function AuthPage() {
   const router = useRouter()
@@ -16,6 +17,8 @@ export default function AuthPage() {
   const { hasAvalancheWallet, walletCreationStep } = useEnhancedAuth()
   const { login, gameState } = useGame()
   const redirectingRef = useRef(false)
+
+  const [isLoading, setIsLoading] = useState(false)
 
   // Handle auto-login and redirect when wallet is ready
   useEffect(() => {
@@ -43,6 +46,24 @@ export default function AuthPage() {
     }
   }, [ready, authenticated, hasAvalancheWallet, gameState.isAuthenticated, login, router])
 
+  // Simulated wallet connect (like old file)
+  const handleWalletConnect = async () => {
+    setIsLoading(true)
+    setTimeout(() => {
+      login({
+        name: 'Crypto Warrior',
+        level: 1,
+        hp: 100,
+        maxHp: 100,
+        gems: 250,
+        xp: 0,
+        avatar: '/Artworks-Characters/MainCharacter.png'
+      })
+      setIsLoading(false)
+      router.push('/dashboard')
+    }, 2000)
+  }
+
   // If user is already authenticated and has wallet, show redirecting state
   if (ready && authenticated && hasAvalancheWallet && (gameState.isAuthenticated || redirectingRef.current)) {
     return (
@@ -53,12 +74,6 @@ export default function AuthPage() {
         </div>
       </div>
     )
-  }
-
-  // If user is fully authenticated but somehow still on auth page, redirect immediately
-  if (ready && authenticated && hasAvalancheWallet && gameState.isAuthenticated) {
-    router.replace('/dashboard')
-    return null
   }
 
   return (
@@ -123,7 +138,33 @@ export default function AuthPage() {
                   <h3 className="text-xl font-bold text-white mb-2">Choose Your Connection Method</h3>
                   <p className="text-gray-400 text-sm">Select how you'd like to connect to AVALORA</p>
                 </div>
-                <LoginButton />
+                <div className="flex flex-col space-y-4">
+                  <LoginButton />
+                  <motion.button
+                    onClick={handleWalletConnect}
+                    disabled={isLoading}
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 flex items-center justify-center shadow-lg shadow-purple-500/20 relative overflow-hidden group"
+                    whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                    whileTap={{ scale: isLoading ? 1 : 0.98 }}
+                  >
+                    {/* Anime shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                    <Wallet className="w-5 h-5 mr-3 relative z-10" />
+                    <span className="relative z-10">
+                      {isLoading ? (
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                          接続中...
+                        </div>
+                      ) : (
+                        <>
+                          ウォレット接続
+                          <div className="text-xs opacity-75">Connect Wallet</div>
+                        </>
+                      )}
+                    </span>
+                  </motion.button>
+                </div>
               </div>
             ) : !hasAvalancheWallet ? (
               <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-yellow-400 shadow-lg shadow-yellow-500/20">
