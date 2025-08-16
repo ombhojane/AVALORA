@@ -45,27 +45,20 @@ export const useEnhancedAuth = () => {
     return user.linkedAccounts[0]?.type || null;
   }, [user]);
 
-  // Check if user has an Avalanche wallet
+  // Check if user has an Avalanche wallet (memoized to prevent excessive calls)
   const checkAvalancheWallet = useCallback(() => {
-    console.log('Checking for Avalanche wallet...');
-    console.log('Available wallets:', wallets);
-    
     if (wallets.length === 0) {
-      console.log('No wallets found');
       return false;
     }
     
     // Find the FIRST Avalanche wallet
     const avalancheWallet = wallets.find(wallet => {
       const chainId = wallet.chainId;
-      console.log('Checking wallet:', wallet.address, 'chainId:', chainId);
       const isAvalanche = chainId === `eip155:${avalanche.id}` || chainId === `eip155:${avalancheFuji.id}`;
-      console.log('Is Avalanche wallet:', isAvalanche);
       return isAvalanche;
     });
     
     const hasWallet = !!avalancheWallet;
-    console.log('Has Avalanche wallet:', hasWallet);
     
     if (hasWallet && avalancheWallet) {
       setAuthState(prev => ({
@@ -75,7 +68,7 @@ export const useEnhancedAuth = () => {
     }
     
     return hasWallet;
-  }, [wallets]);
+  }, [wallets.length, wallets.map(w => w.chainId).join(',')]); // Only re-run when wallet count or chain IDs change
 
   // Create embedded wallet for user
   const createEmbeddedWallet = useCallback(async () => {
@@ -214,29 +207,30 @@ export const useEnhancedAuth = () => {
     }));
   }, [ready, authenticated, user, wallets, getUserPreferredLogin, checkAvalancheWallet]);
 
-  // Immediate wallet detection when wallets change
+  // Immediate wallet detection when wallets change (throttled)
   useEffect(() => {
     if (ready && authenticated && wallets.length > 0) {
       const loginMethod = getUserPreferredLogin();
       const isOffChainLogin = loginMethod && ['google', 'github', 'email', 'phone'].includes(loginMethod);
       
-      if (isOffChainLogin) {
-        console.log('Wallets changed for off-chain user, checking for Avalanche compatibility...');
-        const hasWallet = checkAvalancheWallet();
-        
-        if (hasWallet) {
-          console.log('Avalanche wallet detected immediately, updating state');
-          setAuthState(prev => ({
-            ...prev,
-            hasAvalancheWallet: true,
-            walletCreationStep: 'created',
-          }));
+      // Throttle wallet checks to prevent excessive re-renders
+      const timeoutId = setTimeout(() => {
+        if (isOffChainLogin) {
+          const hasWallet = checkAvalancheWallet();
+          
+          if (hasWallet) {
+            setAuthState(prev => ({
+              ...prev,
+              hasAvalancheWallet: true,
+              walletCreationStep: 'created',
+            }));
+          }
         }
-      } else {
-        console.log('Direct wallet connection, skipping immediate wallet detection');
-      }
+      }, 100);
+      
+      return () => clearTimeout(timeoutId);
     }
-  }, [wallets, ready, authenticated, checkAvalancheWallet, getUserPreferredLogin]);
+  }, [wallets.length, ready, authenticated, checkAvalancheWallet, getUserPreferredLogin]);
 
   // Auto-ensure wallet exists when user authenticates
   useEffect(() => {

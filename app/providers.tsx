@@ -48,11 +48,16 @@ function GameProvider({ children }: { children: ReactNode }) {
   }
 
   const login = (playerData: any) => {
-    setGameState(prev => ({
-      ...prev,
-      isAuthenticated: true,
-      player: { ...prev.player, ...playerData }
-    }))
+    console.log('Game login called with:', playerData)
+    setGameState(prev => {
+      const newState = {
+        ...prev,
+        isAuthenticated: true,
+        player: { ...prev.player, ...playerData }
+      }
+      console.log('Game state updated:', newState)
+      return newState
+    })
   }
 
   const logout = () => {

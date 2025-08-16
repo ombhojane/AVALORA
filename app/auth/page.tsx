@@ -1,73 +1,64 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import { usePrivy } from '@privy-io/react-auth'
+import { useEnhancedAuth } from '@/hooks/useEnhancedAuth'
 import { useGame } from '@/app/providers'
-import { Mail, Lock, User, Wallet } from 'lucide-react'
+import WalletDisplay from '@/components/wallet/wallet-display'
+import WalletCreation from '@/components/wallet/wallet-creation'
+import LoginButton from '@/components/auth/login-button'
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: ''
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const { login } = useGame()
+  const { ready, authenticated } = usePrivy()
+  const { hasAvalancheWallet, walletCreationStep } = useEnhancedAuth()
+  const { login, gameState } = useGame()
+  const redirectingRef = useRef(false)
 
+  // Handle auto-login and redirect when wallet is ready
   useEffect(() => {
-    const mode = searchParams.get('mode')
-    if (mode === 'wallet') {
-      handleWalletConnect()
-    }
-  }, [searchParams])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      login({
-        name: formData.username || 'Warrior',
-        level: 1,
-        hp: 100,
-        maxHp: 100,
-        gems: 100,
-        xp: 0
-      })
-      setIsLoading(false)
-      router.push('/dashboard')
-    }, 1500)
-  }
-
-  const handleWalletConnect = async () => {
-    setIsLoading(true)
+    console.log('Auth page effect:', { ready, authenticated, hasAvalancheWallet, gameAuthenticated: gameState.isAuthenticated, redirecting: redirectingRef.current })
     
-    // Simulate wallet connection
-    setTimeout(() => {
-      login({
-        name: 'Crypto Warrior',
-        level: 1,
-        hp: 100,
-        maxHp: 100,
-        gems: 250,
-        xp: 0
-      })
-      setIsLoading(false)
-      router.push('/dashboard')
-    }, 2000)
+    if (ready && authenticated && hasAvalancheWallet) {
+      if (!gameState.isAuthenticated && !redirectingRef.current) {
+        console.log('Starting auto-login process')
+        redirectingRef.current = true
+        
+        // Auto-login to game
+        login({
+          name: 'Avalanche Warrior',
+          level: 1,
+          hp: 100,
+          maxHp: 100,
+          gems: 250,
+          xp: 0,
+          avatar: '/Artworks-Characters/MainCharacter.png'
+        })
+      } else if (gameState.isAuthenticated) {
+        console.log('Game authenticated, redirecting to dashboard')
+        router.replace('/dashboard')
+      }
+    }
+  }, [ready, authenticated, hasAvalancheWallet, gameState.isAuthenticated, login, router])
+
+  // If user is already authenticated and has wallet, show redirecting state
+  if (ready && authenticated && hasAvalancheWallet && (gameState.isAuthenticated || redirectingRef.current)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-avalanche-red mx-auto mb-4"></div>
+          <p>Redirecting to dashboard...</p>
+        </div>
+      </div>
+    )
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }))
+  // If user is fully authenticated but somehow still on auth page, redirect immediately
+  if (ready && authenticated && hasAvalancheWallet && gameState.isAuthenticated) {
+    router.replace('/dashboard')
+    return null
   }
 
   return (
@@ -82,6 +73,24 @@ export default function AuthPage() {
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-80" />
       
+      {/* Floating anime particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(10)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${3 + Math.random() * 4}s`
+            }}
+          >
+            <div className="w-2 h-2 bg-avalanche-red rounded-full opacity-30" />
+          </div>
+        ))}
+      </div>
+      
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -91,110 +100,59 @@ export default function AuthPage() {
         <div className="manga-border bg-black bg-opacity-90 backdrop-blur-sm p-8 rounded-2xl">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-manga font-bold text-white mb-2">
-              {isLogin ? 'Welcome Back' : 'Join the Quest'}
+              Welcome to AVALORA
             </h1>
             <p className="text-gray-300">
-              {isLogin ? 'Continue your adventure' : 'Begin your journey in AVALORA'}
+              Connect your wallet to begin your adventure
             </p>
           </div>
 
-          <div className="flex mb-6">
-            <button
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 px-4 rounded-l-lg transition-all duration-300 ${
-                isLogin 
-                  ? 'bg-avalanche-red text-white' 
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-              }`}
-            >
-              Login
-            </button>
-            <button
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 px-4 rounded-r-lg transition-all duration-300 ${
-                !isLogin 
-                  ? 'bg-avalanche-red text-white' 
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-              }`}
-            >
-              Sign Up
-            </button>
+          {/* Wallet Connection Panel */}
+          <div className="space-y-6">
+            {!ready ? (
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-gray-600 shadow-lg">
+                <div className="animate-pulse text-center">
+                  <div className="h-4 bg-gray-600 rounded w-1/3 mb-4 mx-auto"></div>
+                  <div className="h-8 bg-gray-600 rounded w-2/3 mb-2 mx-auto"></div>
+                  <div className="h-4 bg-gray-600 rounded w-1/2 mx-auto"></div>
+                </div>
+              </div>
+            ) : !authenticated ? (
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-avalanche-red shadow-lg shadow-red-500/20">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold text-white mb-2">Choose Your Connection Method</h3>
+                  <p className="text-gray-400 text-sm">Select how you'd like to connect to AVALORA</p>
+                </div>
+                <LoginButton />
+              </div>
+            ) : !hasAvalancheWallet ? (
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-yellow-400 shadow-lg shadow-yellow-500/20">
+                <div className="text-center mb-4">
+                  <h3 className="text-lg font-bold text-white mb-2">Setting Up Your Wallet</h3>
+                  <p className="text-gray-400 text-sm">Creating your Avalanche wallet...</p>
+                </div>
+                <WalletCreation />
+              </div>
+            ) : (
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-green-400 shadow-lg shadow-green-500/20">
+                <div className="text-center mb-4">
+                  <h3 className="text-lg font-bold text-white mb-2">Wallet Connected!</h3>
+                  <p className="text-gray-400 text-sm">Redirecting to dashboard...</p>
+                </div>
+                <WalletDisplay />
+              </div>
+            )}
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <AnimatePresence mode="wait">
-              {!isLogin && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type="text"
-                      name="username"
-                      placeholder="Username"
-                      value={formData.username}
-                      onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-avalanche-red focus:outline-none transition-colors"
-                      required={!isLogin}
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-avalanche-red focus:outline-none transition-colors"
-                required
-              />
+          {/* Connection Options Info */}
+          <div className="mt-8 text-center">
+            <div className="text-gray-500 text-sm mb-4">Available connection methods:</div>
+            <div className="flex justify-center space-x-4 text-xs text-gray-400">
+              <span>🔗 Wallet</span>
+              <span>📧 Email</span>
+              <span>🔍 Google</span>
+              <span>📱 Phone</span>
             </div>
-
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-avalanche-red focus:outline-none transition-colors"
-                required
-              />
-            </div>
-
-            <motion.button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-gradient-to-r from-avalanche-red to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 disabled:opacity-50"
-              whileHover={{ scale: isLoading ? 1 : 1.02 }}
-              whileTap={{ scale: isLoading ? 1 : 0.98 }}
-            >
-              {isLoading ? 'Loading...' : (isLogin ? 'Enter Game' : 'Create Account')}
-            </motion.button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <div className="text-gray-400 mb-4">or</div>
-            <motion.button
-              onClick={handleWalletConnect}
-              disabled={isLoading}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 disabled:opacity-50 flex items-center justify-center"
-              whileHover={{ scale: isLoading ? 1 : 1.02 }}
-              whileTap={{ scale: isLoading ? 1 : 0.98 }}
-            >
-              <Wallet className="w-5 h-5 mr-2" />
-              {isLoading ? 'Connecting...' : 'Connect Wallet'}
-            </motion.button>
           </div>
         </div>
       </motion.div>
