@@ -27,20 +27,7 @@ export default function LoginButton() {
     }
   };
 
-  // Auto-login to game when Privy authentication is complete and wallet is ready
-  React.useEffect(() => {
-    if (ready && authenticated && hasAvalancheWallet && !gameState.isAuthenticated) {
-      gameLogin({
-        name: 'Avalanche Warrior',
-        level: 1,
-        hp: 100,
-        maxHp: 100,
-        gems: 0,
-        xp: 0,
-        avatar: '/Artworks-Characters/MainCharacter.png'
-      });
-    }
-  }, [ready, authenticated, hasAvalancheWallet, gameState.isAuthenticated, gameLogin]);
+  // This effect is now handled in the auth page to control the flow better
 
   if (!ready) {
     return (
@@ -70,11 +57,23 @@ export default function LoginButton() {
   }
 
   return (
-    <button
-      onClick={handleLogin}
-      className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-medium rounded-md transition-colors"
-    >
-      Connect Wallet
-    </button>
+    <div className="space-y-4">
+      <button
+        onClick={handleLogin}
+        className="w-full px-6 py-4 bg-gradient-to-r from-avalanche-red to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold rounded-lg transition-all duration-300 flex items-center justify-center"
+      >
+        <span className="mr-2">🚀</span>
+        Connect to AVALORA
+      </button>
+      
+      <div className="text-center text-gray-400 text-sm">
+        <p>Choose from multiple connection options:</p>
+        <div className="flex justify-center space-x-4 mt-2">
+          <span>🔗 MetaMask</span>
+          <span>📧 Email</span>
+          <span>🔍 Google</span>
+        </div>
+      </div>
+    </div>
   );
 }

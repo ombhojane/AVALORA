@@ -1,15 +1,14 @@
 'use client'
 
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useGame } from '@/app/providers'
 import { useRouter } from 'next/navigation'
-import { Sword, Target, ShoppingBag, Trophy, User, BookOpen, Heart, Gem, Wallet, Plus } from 'lucide-react'
-import Image from 'next/image'
 import { usePrivy } from '@privy-io/react-auth'
 import { useEnhancedAuth } from '@/hooks/useEnhancedAuth'
+import { Sword, Target, ShoppingBag, Trophy, User, BookOpen, Heart, Gem } from 'lucide-react'
+import Image from 'next/image'
 import WalletDisplay from '@/components/wallet/wallet-display'
-import WalletCreation from '@/components/wallet/wallet-creation'
-import LoginButton from '@/components/auth/login-button'
 
 const quickLinks = [
   { 
@@ -66,7 +65,33 @@ export default function DashboardPage() {
   const { gameState } = useGame()
   const router = useRouter()
   const { ready, authenticated } = usePrivy()
-  const { hasAvalancheWallet, walletCreationStep } = useEnhancedAuth()
+  const { hasAvalancheWallet } = useEnhancedAuth()
+
+  // Simple redirect logic - only redirect if clearly not authenticated
+  useEffect(() => {
+    if (ready && (!authenticated || !hasAvalancheWallet || !gameState.isAuthenticated)) {
+      // Only redirect if we're sure the user is not authenticated
+      const timeoutId = setTimeout(() => {
+        if (!gameState.isAuthenticated) {
+          router.replace('/auth')
+        }
+      }, 1000) // Give time for any pending authentication
+      
+      return () => clearTimeout(timeoutId)
+    }
+  }, [ready, authenticated, hasAvalancheWallet, gameState.isAuthenticated, router])
+
+  // Show loading while checking authentication
+  if (!ready || !authenticated || !hasAvalancheWallet || !gameState.isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-avalanche-red mx-auto mb-4"></div>
+          <p>Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
 
   const handleNavigation = (href: string) => {
     router.push(href)
@@ -118,33 +143,14 @@ export default function DashboardPage() {
             <p className="text-xl text-gray-300">Ready for your next adventure?</p>
           </motion.div>
 
-          {/* Wallet Panel */}
+          {/* Wallet Panel - Only show wallet info for connected users */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="min-w-[320px]"
           >
-            {!ready ? (
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-gray-600 shadow-lg">
-                <div className="animate-pulse">
-                  <div className="h-4 bg-gray-600 rounded w-1/3 mb-4"></div>
-                  <div className="h-8 bg-gray-600 rounded w-2/3 mb-2"></div>
-                  <div className="h-4 bg-gray-600 rounded w-1/2"></div>
-                </div>
-              </div>
-            ) : !authenticated ? (
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-red-400 shadow-lg shadow-red-500/20">
-                <div className="text-center">
-                  <h3 className="text-lg font-bold text-white mb-4">Connect Your Wallet</h3>
-                  <LoginButton />
-                </div>
-              </div>
-            ) : !hasAvalancheWallet ? (
-              <WalletCreation />
-            ) : (
-              <WalletDisplay />
-            )}
+            <WalletDisplay />
           </motion.div>
         </div>
 
