@@ -149,7 +149,8 @@ const chapters: Chapter[] = [
         answer: 'AVALANCHE',
         reward: { gems: 15, xp: 30 },
         hero: '/Artworks-Characters/AVALANCH.png',
-        villain: '/VillainAssets/MeronDevil.jpg'
+        villain: '/VillainAssets/MeronDevil.jpg',
+        timeLimit: 30
       },
       {
         id: 2,
@@ -159,7 +160,8 @@ const chapters: Chapter[] = [
         options: ['AVALORA', 'ETHEREUM', 'BITCOIN', 'SOLANA'],
         reward: { gems: 20, xp: 40 },
         hero: '/Artworks-Characters/AVALANCH.png',
-        villain: '/VillainAssets/MeronDevil.jpg'
+        villain: '/VillainAssets/MeronDevil.jpg',
+        timeLimit: 45
       },
       {
         id: 3,
@@ -169,25 +171,187 @@ const chapters: Chapter[] = [
         options: ['AVAX', 'ETH'],
         reward: { gems: 25, xp: 50 },
         hero: '/Artworks-Characters/AVALANCH.png',
-        villain: '/VillainAssets/MeronDevil.jpg'
+        villain: '/VillainAssets/MeronDevil.jpg',
+        timeLimit: 60
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: 'Chapter 2: The Shadow Blade',
+    description: 'Cutter faces the temptation of Lady Virexia',
+    videoIntro: '/QuestAssets/Chapter2/Chapter2.mp4',
+    completed: false,
+    unlocked: false,
+    comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    unlockCost: 200,
+    storyText: chapterStories[2],
+    battles: [
+      {
+        id: 1,
+        type: 'typing',
+        challenge: 'Type: CUTTER',
+        answer: 'CUTTER',
+        reward: { gems: 20, xp: 40 },
+        hero: '/Artworks-Characters/Cutter.png',
+        villain: '/VillainAssets/MeronWitch.jpg',
+        timeLimit: 25
+      },
+      {
+        id: 2,
+        type: 'jumble',
+        challenge: 'DOHWASS',
+        answer: 'SHADOWS',
+        reward: { gems: 25, xp: 50 },
+        hero: '/Artworks-Characters/Cutter.png',
+        villain: '/VillainAssets/MeronWitch.jpg',
+        timeLimit: 30
+      },
+      {
+        id: 3,
+        type: 'trivia',
+        challenge: 'What is Cutter\'s specialty?',
+        answer: 'Digital Blades',
+        options: ['Digital Blades', 'Fire Magic', 'Ice Powers', 'Lightning'],
+        reward: { gems: 30, xp: 60 },
+        hero: '/Artworks-Characters/Cutter.png',
+        villain: '/VillainAssets/MeronWitch.jpg',
+        timeLimit: 45
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: 'Chapter 3: The Crimson Sentinel',
+    description: 'Face the devastating war machine from the skies',
+    videoIntro: '/QuestAssets/Chapter3/Chapter3.mp4',
+    completed: false,
+    unlocked: false,
+    comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    unlockCost: 300,
+    storyText: chapterStories[3],
+    battles: [
+      {
+        id: 1,
+        type: 'typing',
+        challenge: 'Type: SENTINEL',
+        answer: 'SENTINEL',
+        reward: { gems: 25, xp: 50 },
+        hero: '/Artworks-Characters/AVAXIM - EMPEROR OF AVALAND.png',
+        villain: '/VillainAssets/MeronEmperor.jpg',
+        timeLimit: 20
+      },
+      {
+        id: 2,
+        type: 'trivia',
+        challenge: 'What color is the Sentinel\'s visor?',
+        answer: 'Red',
+        options: ['Red', 'Blue', 'Green', 'Purple'],
+        reward: { gems: 30, xp: 60 },
+        hero: '/Artworks-Characters/AVAXIM - EMPEROR OF AVALAND.png',
+        villain: '/VillainAssets/MeronEmperor.jpg',
+        timeLimit: 40
+      },
+      {
+        id: 3,
+        type: 'jumble',
+        challenge: 'EPMRERO',
+        answer: 'EMPEROR',
+        reward: { gems: 35, xp: 70 },
+        hero: '/Artworks-Characters/AVAXIM - EMPEROR OF AVALAND.png',
+        villain: '/VillainAssets/MeronEmperor.jpg',
+        timeLimit: 35
+      }
+    ]
+  },
+  {
+    id: 4,
+    title: 'Chapter 4: The Mad Scientist',
+    description: 'Dr. Malgrave\'s calculated assault on reality',
+    videoIntro: '/QuestAssets/Chapter4/Chapter4.mp4',
+    completed: false,
+    unlocked: false,
+    comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    unlockCost: 400,
+    storyText: chapterStories[4],
+    battles: [
+      {
+        id: 1,
+        type: 'math',
+        challenge: 'Calculate: 25 + 15 = ?',
+        answer: '40',
+        reward: { gems: 30, xp: 60 },
+        hero: '/Artworks-Characters/AVALANCH.png',
+        villain: '/VillainAssets/MeronWizard.jpg',
+        timeLimit: 30
+      },
+      {
+        id: 2,
+        type: 'trivia',
+        challenge: 'What does Dr. Malgrave seek to turn harmony into?',
+        answer: 'Discord',
+        options: ['Discord', 'Peace', 'Love', 'Order'],
+        reward: { gems: 35, xp: 70 },
+        hero: '/Artworks-Characters/AVALANCH.png',
+        villain: '/VillainAssets/MeronWizard.jpg',
+        timeLimit: 45
+      },
+      {
+        id: 3,
+        type: 'typing',
+        challenge: 'Type: LABORATORY',
+        answer: 'LABORATORY',
+        reward: { gems: 40, xp: 80 },
+        hero: '/Artworks-Characters/AVALANCH.png',
+        villain: '/VillainAssets/MeronWizard.jpg',
+        timeLimit: 25
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: 'Chapter 5: The Final Battle',
+    description: 'The ultimate confrontation for AVALORA\'s fate',
+    videoIntro: '/QuestAssets/Chapter5/Chapter5.mp4',
+    completed: false,
+    unlocked: false,
+    comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    unlockCost: 500,
+    storyText: chapterStories[5],
+    battles: [
+      {
+        id: 1,
+        type: 'typing',
+        challenge: 'Type: FINAL BATTLE',
+        answer: 'FINAL BATTLE',
+        reward: { gems: 40, xp: 80 },
+        hero: '/Artworks-Characters/AVAXIM - EMPEROR OF AVALAND.png',
+        villain: '/VillainAssets/MeronDragon.jpg',
+        timeLimit: 20
+      },
+      {
+        id: 2,
+        type: 'trivia',
+        challenge: 'Where does the final battle take place?',
+        answer: 'Avaland Citadel',
+        options: ['Avaland Citadel', 'Mountain Dojo', 'Laboratory', 'Valley'],
+        reward: { gems: 45, xp: 90 },
+        hero: '/Artworks-Characters/AVAXIM - EMPEROR OF AVALAND.png',
+        villain: '/VillainAssets/MeronDragon.jpg',
+        timeLimit: 50
+      },
+      {
+        id: 3,
+        type: 'jumble',
+        challenge: 'NDGELE',
+        answer: 'LEGEND',
+        reward: { gems: 50, xp: 100 },
+        hero: '/Artworks-Characters/AVAXIM - EMPEROR OF AVALAND.png',
+        villain: '/VillainAssets/MeronDragon.jpg',
+        timeLimit: 30
       }
     ]
   }
-]
-
-// Chapter 1 story content
-const chapter1Story = [
-  "The eternal winter of Avalora was a symphony of silence, broken only by the howl of the wind across its snow-swept peaks.",
-  "In the heart of the realm, the Avaland Citadel stood as a monument to order, its crystalline towers glowing with the crimson light of the Gems of Eternity.",
-  "Emperor Avaxim, the Unyielding Avalanche, sat upon his throne of ice and fire, his gaze fixed on the swirling snows beyond the grand windows.",
-  "A disquiet had settled upon him, a subtle tremor in the blockchain that underpinned their reality.",
-  "Beside him, Avalanch, the ever-loyal ambassador, shifted his weight. His own senses, finely tuned to the realm's digital heartbeat, picked up the same disturbance.",
-  "\"The network feels... strained, my Emperor,\" Avalanch said, his voice a low hum that resonated with the Citadel's deep energies.",
-  "\"The data streams are agitated, like a river before a storm.\"",
-  "Avaxim nodded, his powerful hands clenching on the arms of his throne. The confirmation from his most trusted advisor solidified the cold dread coiling in his gut.",
-  "\"The Shards of Corruption are no longer a distant threat,\" the Emperor declared, his voice echoing in the vast hall.",
-  "\"They are at our gates. I feel their greed, a gnawing hunger for the Gems.\"",
-  "As if summoned by his words, a faint, discordant hum echoed from the valley below. It was a sound alien to the perfect harmony of Avalora, a note of pure chaos."
 ]
 
 export default function QuestPage() {
@@ -237,25 +401,23 @@ export default function QuestPage() {
   }
 
   const onVideoEnd = () => {
-    if (currentChapter === 0) {
-      // Mark chapter 0 as completed and unlock chapter 1
-      chapters[0].completed = true
-      chapters[1].unlocked = true
-      setGamePhase('home')
-    } else {
-      // Show comic for other chapters
-      setGamePhase('comic')
-      setCurrentComicPage(0)
-    }
+    // Show comic for all chapters including Chapter 0
+    setGamePhase('comic')
+    setCurrentComicPage(0)
   }
 
   const nextComicPage = () => {
     if (chapter?.comicPages && currentComicPage < chapter.comicPages.length - 1) {
       setCurrentComicPage(currentComicPage + 1)
     } else {
-      // Comic finished, show battle option
+      // Comic finished
       setGamePhase('home')
       chapter!.completed = true
+      
+      // Special handling for Chapter 0 - unlock Chapter 1
+      if (currentChapter === 0) {
+        chapters[1].unlocked = true
+      }
     }
   }
 
@@ -270,14 +432,19 @@ export default function QuestPage() {
       alert('You have no battle attempts left today!')
       return
     }
+    // Reset all battle state
     setGamePhase('battle')
     setCurrentBattle(0)
+    setUserInput('')
+    setSelectedOption('')
+    setBattleResult(null)
     setIsActive(true)
-    setTimeLeft(30)
+    setTimeLeft(chapter?.battles?.[0]?.timeLimit || 30)
     setBattleAttempts(0)
   }
 
   const handleBattleEnd = (won: boolean) => {
+    console.log('Battle ending with result:', won)
     setIsActive(false)
     setBattleResult(won ? 'win' : 'lose')
     
@@ -309,20 +476,31 @@ export default function QuestPage() {
   const checkAnswer = () => {
     if (!battle) return
     
+    console.log('Checking answer for battle:', battle.type, 'User input:', userInput, 'Selected option:', selectedOption)
+    
     let isCorrect = false
+    const answer = Array.isArray(battle.answer) ? battle.answer[0] : battle.answer
     
     switch (battle.type) {
       case 'typing':
-        isCorrect = userInput.toUpperCase() === battle.answer.toUpperCase()
+        isCorrect = userInput.toUpperCase() === answer.toUpperCase()
+        console.log('Typing check:', userInput.toUpperCase(), 'vs', answer.toUpperCase(), '=', isCorrect)
         break
       case 'jumble':
-        isCorrect = userInput.toUpperCase() === battle.answer.toUpperCase()
+        isCorrect = userInput.toUpperCase() === answer.toUpperCase()
+        console.log('Jumble check:', userInput.toUpperCase(), 'vs', answer.toUpperCase(), '=', isCorrect)
         break
       case 'trivia':
-        isCorrect = selectedOption === battle.answer
+        isCorrect = selectedOption === answer
+        console.log('Trivia check:', selectedOption, 'vs', answer, '=', isCorrect)
+        break
+      case 'math':
+        isCorrect = userInput === answer
+        console.log('Math check:', userInput, 'vs', answer, '=', isCorrect)
         break
     }
     
+    console.log('Final result:', isCorrect)
     handleBattleEnd(isCorrect)
   }
 
@@ -332,7 +510,7 @@ export default function QuestPage() {
       setUserInput('')
       setSelectedOption('')
       setBattleResult(null)
-      setTimeLeft(30)
+      setTimeLeft(chapter.battles[currentBattle + 1]?.timeLimit || 30)
       setIsActive(true)
     } else {
       // All battles completed, unlock next chapter
@@ -348,7 +526,7 @@ export default function QuestPage() {
     setUserInput('')
     setSelectedOption('')
     setBattleResult(null)
-    setTimeLeft(30)
+    setTimeLeft(battle?.timeLimit || 30)
     setIsActive(true)
   }
 
@@ -632,7 +810,7 @@ export default function QuestPage() {
               <div className="relative z-10 mb-6">
                 <div className="relative w-full" style={{ aspectRatio: '4/3' }}>
                   <Image
-                    src={`/QuestAssets/Chapter1/${chapter.comicPages[currentComicPage]}.png`}
+                    src={`/QuestAssets/Chapter${currentChapter}/${chapter.comicPages[currentComicPage]}.png`}
                     alt={`Comic Page ${currentComicPage + 1}`}
                     fill
                     className="object-contain rounded-lg"
@@ -644,7 +822,7 @@ export default function QuestPage() {
               {/* Story Text */}
               <div className="relative z-10 bg-white/90 p-6 rounded-lg border-2 border-black">
                 <p className="text-lg text-black leading-relaxed font-serif">
-                  {chapter1Story[currentComicPage] || "The story continues..."}
+                  {chapter?.storyText?.[currentComicPage] || "The story continues..."}
                 </p>
               </div>
             </div>
@@ -743,11 +921,13 @@ export default function QuestPage() {
             >
               <div className="text-center mb-6">
                 <h2 className="text-3xl font-bold text-yellow-400 mb-4">
-                  Battle {currentBattle + 1}/3
+                  Battle {currentBattle + 1}/{chapter?.battles?.length || 1}
                 </h2>
                 <div className="text-xl text-white mb-4">
+                  {battle.type === 'typing' && 'Type the Word'}
                   {battle.type === 'jumble' && 'Unscramble the Word'}
                   {battle.type === 'trivia' && 'Answer the Question'}
+                  {battle.type === 'math' && 'Solve the Equation'}
                 </div>
                 <div className="text-lg text-gray-300 mb-6 p-4 bg-black/50 rounded-lg">
                   {battle.challenge}
@@ -779,6 +959,11 @@ export default function QuestPage() {
                       type="text"
                       value={userInput}
                       onChange={(e) => setUserInput(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && userInput.trim()) {
+                          checkAnswer()
+                        }
+                      }}
                       placeholder="Type your answer..."
                       className="w-full p-4 text-xl text-center bg-gray-800 border-2 border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none transition-colors"
                       autoFocus
@@ -787,7 +972,10 @@ export default function QuestPage() {
 
                   <motion.button
                     onClick={checkAnswer}
-                    disabled={!userInput && !selectedOption}
+                    disabled={
+                      (battle.type === 'trivia' && !selectedOption) ||
+                      (battle.type !== 'trivia' && !userInput.trim())
+                    }
                     className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 disabled:opacity-50"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
