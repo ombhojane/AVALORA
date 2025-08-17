@@ -17,7 +17,7 @@ export const AVALANCHE_NETWORKS: Record<string, NetworkInfo> = {
   mainnet: {
     id: avalanche.id,
     name: 'Avalanche Mainnet',
-    rpcUrl: 'https://rpc.ankr.com/avalanche',
+    rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
     explorerUrl: 'https://snowtrace.io',
     isTestnet: false,
     nativeCurrency: {
@@ -29,7 +29,7 @@ export const AVALANCHE_NETWORKS: Record<string, NetworkInfo> = {
   fuji: {
     id: avalancheFuji.id,
     name: 'Avalanche Fuji Testnet',
-    rpcUrl: 'https://rpc.ankr.com/avalanche_fuji',
+    rpcUrl: 'https://api.avax-test.network/ext/bc/C/rpc',
     explorerUrl: 'https://testnet.snowtrace.io',
     isTestnet: true,
     nativeCurrency: {

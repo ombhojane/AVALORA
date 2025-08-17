@@ -23,6 +23,14 @@ interface Chapter {
   battles: Battle[]
   unlockCost: number
   storyText: string[]
+  educationalContent?: {
+    myth: {
+      question: string
+      answer: string
+    }
+    funFact: string
+    didYouKnow: string
+  }
 }
 
 interface Battle {
@@ -35,6 +43,57 @@ interface Battle {
   hero: string
   villain: string
   timeLimit: number
+}
+
+const chapterEducationalContent = {
+  0: {
+    myth: {
+      question: "Do you need real money to start learning blockchain development?",
+      answer: "No! Most blockchains provide free testnet tokens that work exactly like real ones but have no monetary value. You can build, test, and deploy smart contracts without spending a cent!"
+    },
+    funFact: "The first blockchain transaction was a pizza purchase for 10,000 Bitcoin - worth over $400 million today!",
+    didYouKnow: "Blockchain networks are maintained by thousands of computers worldwide, making them nearly impossible to hack or shut down."
+  },
+  1: {
+    myth: {
+      question: "Is blockchain technology only useful for cryptocurrencies?",
+      answer: "Not at all! Blockchain is used for supply chain tracking, voting systems, digital identity, NFTs, gaming, healthcare records, and much more. Crypto was just the first application!"
+    },
+    funFact: "Avalanche can process over 4,500 transactions per second, while Bitcoin processes about 7 transactions per second.",
+    didYouKnow: "Smart contracts are self-executing contracts where the terms are directly written into code - no lawyers needed!"
+  },
+  2: {
+    myth: {
+      question: "Are blockchain transactions always slow and expensive?",
+      answer: "No! While Bitcoin and Ethereum can be slow and costly, newer blockchains like Avalanche offer sub-second finality and very low fees. Technology keeps improving!"
+    },
+    funFact: "Avalanche uses a unique consensus mechanism that allows thousands of validators to agree on transactions in under 1 second.",
+    didYouKnow: "You can create your own custom blockchain (subnet) on Avalanche with your own rules and validators!"
+  },
+  3: {
+    myth: {
+      question: "Do I need to be a coding expert to understand blockchain?",
+      answer: "Not necessarily! While coding helps, you can understand blockchain concepts, use DeFi apps, trade NFTs, and participate in DAOs without writing code. Start with the basics!"
+    },
+    funFact: "The term 'HODL' came from a misspelled 'hold' in a Bitcoin forum post and became a popular investment strategy.",
+    didYouKnow: "Decentralized Autonomous Organizations (DAOs) allow communities to make decisions collectively through blockchain voting!"
+  },
+  4: {
+    myth: {
+      question: "Is blockchain technology bad for the environment?",
+      answer: "It depends on the consensus mechanism! Bitcoin uses energy-intensive mining, but newer blockchains like Avalanche use Proof-of-Stake, which uses 99.9% less energy."
+    },
+    funFact: "Avalanche's consensus protocol was inspired by gossip protocols - the same way rumors spread in social networks!",
+    didYouKnow: "You can stake your AVAX tokens to help secure the network and earn rewards, just like earning interest in a savings account!"
+  },
+  5: {
+    myth: {
+      question: "Will blockchain replace traditional banks and financial systems?",
+      answer: "Likely not replace, but complement! Blockchain offers new financial tools (DeFi) that work alongside traditional finance. Many banks are already adopting blockchain technology."
+    },
+    funFact: "The total value locked in DeFi protocols peaked at over $180 billion, showing massive adoption of decentralized finance.",
+    didYouKnow: "Cross-chain bridges allow you to move assets between different blockchains, creating an interconnected ecosystem of networks!"
+  }
 }
 
 const chapterStories = {
@@ -118,6 +177,7 @@ const chapters: Chapter[] = [
     comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     unlockCost: 0,
     storyText: chapterStories[0],
+    educationalContent: chapterEducationalContent[0],
     battles: [
       {
         id: 1,
@@ -141,6 +201,7 @@ const chapters: Chapter[] = [
     comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     unlockCost: 100,
     storyText: chapterStories[1],
+    educationalContent: chapterEducationalContent[1],
     battles: [
       {
         id: 1,
@@ -186,6 +247,7 @@ const chapters: Chapter[] = [
     comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     unlockCost: 200,
     storyText: chapterStories[2],
+    educationalContent: chapterEducationalContent[2],
     battles: [
       {
         id: 1,
@@ -230,6 +292,7 @@ const chapters: Chapter[] = [
     comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9],
     unlockCost: 300,
     storyText: chapterStories[3],
+    educationalContent: chapterEducationalContent[3],
     battles: [
       {
         id: 1,
@@ -274,6 +337,7 @@ const chapters: Chapter[] = [
     comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     unlockCost: 400,
     storyText: chapterStories[4],
+    educationalContent: chapterEducationalContent[4],
     battles: [
       {
         id: 1,
@@ -318,6 +382,7 @@ const chapters: Chapter[] = [
     comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     unlockCost: 500,
     storyText: chapterStories[5],
+    educationalContent: chapterEducationalContent[5],
     battles: [
       {
         id: 1,
@@ -356,7 +421,7 @@ const chapters: Chapter[] = [
 
 export default function QuestPage() {
   const [currentChapter, setCurrentChapter] = useState(0)
-  const [gamePhase, setGamePhase] = useState<'home' | 'video' | 'comic' | 'battle'>('home')
+  const [gamePhase, setGamePhase] = useState<'home' | 'video' | 'comic' | 'battle' | 'education'>('home')
   const [currentComicPage, setCurrentComicPage] = useState(0)
   const [currentBattle, setCurrentBattle] = useState(0)
   const [userInput, setUserInput] = useState('')
@@ -368,6 +433,7 @@ export default function QuestPage() {
   const [dailyAttempts, setDailyAttempts] = useState(3)
   const [showReward, setShowReward] = useState(false)
   const [rewardData, setRewardData] = useState({ xp: 0, gems: 0 })
+  const [showEducationalContent, setShowEducationalContent] = useState(false)
   
   const videoRef = useRef<HTMLVideoElement>(null)
   const { gameState, updateGameState } = useGame()
@@ -401,6 +467,9 @@ export default function QuestPage() {
   }, [isActive, timeLeft, battleResult])
 
   const startQuest = () => {
+    // Reset educational content state
+    setShowEducationalContent(false)
+    
     if (currentChapter === 0) {
       // Chapter 0 - just play video and mark as completed
       setGamePhase('video')
@@ -420,27 +489,34 @@ export default function QuestPage() {
     if (chapter?.comicPages && currentComicPage < chapter.comicPages.length - 1) {
       setCurrentComicPage(currentComicPage + 1)
     } else {
-      // Comic finished - mark chapter as completed in global state
-      setGamePhase('home')
-      
-      // Update global state with chapter completion
-      const isAlreadyCompleted = gameState.questProgress.completedChapters.includes(currentChapter)
-      const isChapter1Unlocked = gameState.questProgress.unlockedChapters.includes(1)
-      
-      const updatedQuestProgress = {
-        ...gameState.questProgress,
-        completedChapters: isAlreadyCompleted 
-          ? gameState.questProgress.completedChapters 
-          : [...gameState.questProgress.completedChapters, currentChapter],
-        unlockedChapters: (currentChapter === 0 && !isChapter1Unlocked)
-          ? [...gameState.questProgress.unlockedChapters, 1]
-          : gameState.questProgress.unlockedChapters
+      // Comic finished - show educational content if available
+      if (chapter?.educationalContent && !showEducationalContent) {
+        setShowEducationalContent(true)
+        setGamePhase('education')
+      } else {
+        // Educational content finished or not available - mark chapter as completed
+        setGamePhase('home')
+        setShowEducationalContent(false)
+        
+        // Update global state with chapter completion
+        const isAlreadyCompleted = gameState.questProgress.completedChapters.includes(currentChapter)
+        const isChapter1Unlocked = gameState.questProgress.unlockedChapters.includes(1)
+        
+        const updatedQuestProgress = {
+          ...gameState.questProgress,
+          completedChapters: isAlreadyCompleted 
+            ? gameState.questProgress.completedChapters 
+            : [...gameState.questProgress.completedChapters, currentChapter],
+          unlockedChapters: (currentChapter === 0 && !isChapter1Unlocked)
+            ? [...gameState.questProgress.unlockedChapters, 1]
+            : gameState.questProgress.unlockedChapters
+        }
+        
+        updateGameState({
+          ...gameState,
+          questProgress: updatedQuestProgress
+        })
       }
-      
-      updateGameState({
-        ...gameState,
-        questProgress: updatedQuestProgress
-      })
     }
   }
 
@@ -1115,6 +1191,160 @@ export default function QuestPage() {
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+      </div>
+    )
+  }
+
+  // Educational Content Phase
+  if (gamePhase === 'education' && chapter?.educationalContent) {
+    return (
+      <div 
+        className="min-h-screen relative overflow-hidden"
+        style={{
+          backgroundImage: 'url(/ImageAssets/Tree.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-85" />
+        
+        {/* Animated particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={`edu-particle-${i}`}
+              className="absolute animate-float"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 6}s`,
+                animationDuration: `${3 + Math.random() * 5}s`
+              }}
+            >
+              <div className="w-3 h-3 bg-yellow-400 rounded-full opacity-50 animate-pulse" />
+            </div>
+          ))}
+        </div>
+
+        <div className="container mx-auto px-4 py-8 relative z-10 max-w-4xl">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-8"
+          >
+            <h1 className="text-5xl font-manga font-bold text-white mb-4">
+              <span className="smoky-text">Knowledge Corner</span>
+            </h1>
+            <p className="text-xl text-gray-300">
+              Learn more about blockchain and AVALORA!
+            </p>
+          </motion.div>
+
+          {/* Educational Cards */}
+          <div className="space-y-8">
+            {/* Myth Buster Card */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-gradient-to-br from-red-500/20 to-pink-500/20 border-2 border-red-400 rounded-2xl p-8 shadow-lg shadow-red-500/20"
+            >
+              <div className="flex items-center mb-6">
+                <div className="bg-red-500 p-3 rounded-full mr-4">
+                  <AlertCircle className="w-8 h-8 text-white" />
+                </div>
+                <h2 className="text-3xl font-bold text-red-400">Myth Buster!</h2>
+              </div>
+              
+              <div className="mb-4">
+                <h3 className="text-xl font-bold text-white mb-3">❓ {chapter.educationalContent.myth.question}</h3>
+                <div className="bg-black/40 p-6 rounded-lg border-l-4 border-red-400">
+                  <p className="text-lg text-gray-200 leading-relaxed">
+                    ✅ {chapter.educationalContent.myth.answer}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Fun Fact Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-2 border-blue-400 rounded-2xl p-8 shadow-lg shadow-blue-500/20"
+            >
+              <div className="flex items-center mb-6">
+                <div className="bg-blue-500 p-3 rounded-full mr-4">
+                  <Star className="w-8 h-8 text-white" />
+                </div>
+                <h2 className="text-3xl font-bold text-blue-400">Fun Fact!</h2>
+              </div>
+              
+              <div className="bg-black/40 p-6 rounded-lg border-l-4 border-blue-400">
+                <p className="text-lg text-gray-200 leading-relaxed">
+                  🎯 {chapter.educationalContent.funFact}
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Did You Know Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-2 border-green-400 rounded-2xl p-8 shadow-lg shadow-green-500/20"
+            >
+              <div className="flex items-center mb-6">
+                <div className="bg-green-500 p-3 rounded-full mr-4">
+                  <Brain className="w-8 h-8 text-white" />
+                </div>
+                <h2 className="text-3xl font-bold text-green-400">Did You Know?</h2>
+              </div>
+              
+              <div className="bg-black/40 p-6 rounded-lg border-l-4 border-green-400">
+                <p className="text-lg text-gray-200 leading-relaxed">
+                  💡 {chapter.educationalContent.didYouKnow}
+                </p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Continue Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="text-center mt-12"
+          >
+            <motion.button
+              onClick={nextComicPage}
+              className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300 flex items-center mx-auto shadow-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Continue Journey
+              <ArrowRight className="w-6 h-6 ml-3" />
+            </motion.button>
+          </motion.div>
+
+          {/* Skip Button */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.0 }}
+            className="text-center mt-4"
+          >
+            <button
+              onClick={nextComicPage}
+              className="text-gray-400 hover:text-white transition-colors text-sm underline"
+            >
+              Skip Knowledge Corner
+            </button>
+          </motion.div>
         </div>
       </div>
     )
