@@ -66,12 +66,12 @@ export function HeroSection() {
           </motion.div>
 
           <motion.h2
-            className="text-2xl md:text-4xl font-anime mb-8 text-manga-white smoky-text"
+            className="text-3xl md:text-5xl font-bold mb-8 text-white drop-shadow-2xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1 }}
           >
-            Shiro no Kizuna – Bonds of the White Snow
+            <span className="text-avalanche-red font-manga">Shiro no Kizuna</span> – Bonds of the White Snow
           </motion.h2>
 
           <motion.p

@@ -6,6 +6,7 @@ import { useGame } from '@/app/providers'
 import { usePrivy } from '@privy-io/react-auth'
 import { useEnhancedAuth } from '@/hooks/useEnhancedAuth'
 import { useAvalancheWallet } from '@/hooks/useAvalancheWallet'
+import SimpleNav from '@/components/navigation/SimpleNav'
 import { User, Edit3, Save, Camera, Award, Gem, Heart, Zap, Wallet, Plus, Settings, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 
@@ -168,6 +169,8 @@ export default function ProfilePage() {
         ))}
       </div>
 
+      <SimpleNav currentPage="Profile" />
+      
       <div className="container mx-auto px-4 py-8 relative z-10" style={{ pointerEvents: 'auto' }}>
         {/* Header */}
         <motion.div

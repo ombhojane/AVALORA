@@ -2,13 +2,15 @@
 
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import { useGame } from '@/app/providers'
 import { useRouter } from 'next/navigation'
 import { usePrivy } from '@privy-io/react-auth'
 import { useEnhancedAuth } from '@/hooks/useEnhancedAuth'
-import { Sword, Target, ShoppingBag, Trophy, User, BookOpen, Heart, Gem } from 'lucide-react'
+import { Sword, Target, ShoppingBag, Trophy, User, BookOpen, Heart, Gem, Plus } from 'lucide-react'
 import Image from 'next/image'
 import WalletDisplay from '@/components/wallet/wallet-display'
+import BuyGemsDialog from '@/components/dialogs/BuyGemsDialog'
 
 const quickLinks = [
   { 
@@ -62,10 +64,11 @@ const quickLinks = [
 ]
 
 export default function DashboardPage() {
-  const { gameState } = useGame()
+  const { gameState, updateGameState } = useGame()
   const router = useRouter()
   const { ready, authenticated } = usePrivy()
   const { hasAvalancheWallet } = useEnhancedAuth()
+  const [showBuyGems, setShowBuyGems] = useState(false)
 
   // Simple redirect logic - only redirect if clearly not authenticated
   useEffect(() => {
@@ -95,6 +98,18 @@ export default function DashboardPage() {
 
   const handleNavigation = (href: string) => {
     router.push(href)
+  }
+
+  const handleBuyGems = (avaxAmount: number, gemsAmount: number) => {
+    const updatedPlayer = {
+      ...gameState.player,
+      gems: gameState.player.gems + gemsAmount
+    }
+    
+    updateGameState({
+      ...gameState,
+      player: updatedPlayer
+    })
   }
 
   return (
@@ -211,8 +226,8 @@ export default function DashboardPage() {
           </div>
 
           {/* Gems Card */}
-          <div className="relative bg-gradient-to-br from-blue-900/30 to-blue-800/30 rounded-2xl p-6 text-center border-2 border-blue-400 shadow-lg shadow-blue-500/20 overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 opacity-10">
+          <div className="relative bg-gradient-to-br from-blue-900/30 to-blue-800/30 rounded-2xl p-6 text-center border-2 border-blue-400 shadow-lg shadow-blue-500/20 overflow-hidden group cursor-pointer" onClick={() => setShowBuyGems(true)}>
+            <div className="absolute top-0 right-0 w-16 h-16 opacity-10 group-hover:opacity-20 transition-opacity">
               <Gem className="w-full h-full text-blue-400" />
             </div>
             <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-blue-400" />
@@ -222,8 +237,12 @@ export default function DashboardPage() {
               <div className="flex items-center justify-center mb-3">
                 <Gem className="w-8 h-8 text-blue-400" />
               </div>
-              <div className="text-2xl font-bold text-white mb-1">{gameState.player.gems}</div>
-              <div className="text-blue-300 font-semibold">Gems</div>
+              <div className="text-2xl font-bold text-white mb-1">{gameState.player.gems.toLocaleString()}</div>
+              <div className="text-blue-300 font-semibold mb-2">Gems</div>
+              <div className="flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Plus className="w-4 h-4 text-blue-400 mr-1" />
+                <span className="text-blue-400 text-sm font-semibold">Buy More</span>
+              </div>
             </div>
           </div>
 
@@ -342,6 +361,14 @@ export default function DashboardPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Buy Gems Dialog */}
+      <BuyGemsDialog
+        isOpen={showBuyGems}
+        onClose={() => setShowBuyGems(false)}
+        onPurchase={handleBuyGems}
+        currentGems={gameState.player.gems}
+      />
     </div>
   )
 }

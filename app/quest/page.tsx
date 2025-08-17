@@ -4,7 +4,12 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGame } from '@/app/providers'
 import { useRouter } from 'next/navigation'
-import { Sword, Heart, Gem, ArrowRight, RotateCcw, Play, ChevronLeft, ChevronRight, Star, Trophy, Lock, CheckCircle, X } from 'lucide-react'
+import SimpleNav from '@/components/navigation/SimpleNav'
+import { 
+  Sword, Heart, Gem, ArrowRight, RotateCcw, Play, ChevronLeft, ChevronRight, 
+  Star, Trophy, Lock, CheckCircle, X, Zap, Target, Clock, Shield, Crown,
+  Gamepad2, Brain, Eye, MousePointer, Keyboard, Timer, AlertCircle
+} from 'lucide-react'
 import Image from 'next/image'
 
 interface Chapter {
@@ -14,19 +19,92 @@ interface Chapter {
   videoIntro: string
   completed: boolean
   unlocked: boolean
-  comicPages?: number[]
-  battles?: Battle[]
+  comicPages: number[]
+  battles: Battle[]
+  unlockCost: number
+  storyText: string[]
 }
 
 interface Battle {
   id: number
-  type: 'typing' | 'jumble' | 'trivia'
+  type: 'typing' | 'jumble' | 'trivia' | 'memory' | 'reaction' | 'sequence' | 'math'
   challenge: string
-  answer: string
+  answer: string | string[]
   options?: string[]
   reward: { gems: number; xp: number }
   hero: string
   villain: string
+  timeLimit: number
+}
+
+const chapterStories = {
+  0: [
+    "In a dimension woven from code and frost, the realm of Avalora existed in serene beauty.",
+    "The Avaland Citadel stood at its center, ruled by the formidable Emperor AVAXIM.",
+    "AVALANCH served as loyal ambassador, guiding warriors across digital realms.",
+    "Cutter practiced his craft in the mountains, his keystrokes a dance of precision.",
+    "Yet shadows lingered... Lady Virexia spun illusions in dark corners.",
+    "The Crimson Sentinel waited dormant, a war machine of terrifying power.",
+    "Dr. Malgrave watched from fractured timelines with calculating eyes.",
+    "And Smirk moved like a ghost through the deepest data streams.",
+    "For a thousand cycles, the Gems of Eternity bathed Avalora in peace.",
+    "Everything was in balance... until now."
+  ],
+  1: [
+    "The eternal winter of Avalora was a symphony of silence, broken only by howling winds.",
+    "In the heart of the realm, the Avaland Citadel glowed with crimson light.",
+    "Emperor Avaxim sat upon his throne of ice and fire, sensing disturbance.",
+    "Avalanch felt the same tremor in the blockchain that underpinned reality.",
+    "The network feels strained, like a river before a storm.",
+    "The Shards of Corruption are no longer a distant threat.",
+    "They are at our gates, hungry for the Gems of Eternity.",
+    "A discordant hum echoed from the valley below.",
+    "It was a sound alien to Avalora's perfect harmony.",
+    "A note of pure chaos had entered their world."
+  ],
+  2: [
+    "Cutter moved with impossible speed in his mountain dojo.",
+    "His fingers blurred across holographic interfaces, forming digital blades.",
+    "Lady Virexia emerged from shadows, her horned mask gleaming.",
+    "Your skills are wasted in this frozen wasteland, she purred.",
+    "Imagine the power you could command if you joined us.",
+    "Her shadows lashed out with whispers of doubt and fear.",
+    "Visions of the Citadel in ruins flickered at the edge of sight.",
+    "My mind is my own, Sorceress, Cutter declared.",
+    "Pure energy erupted from him, shattering the shadow-copies.",
+    "Even the strongest wills can be broken, she warned before vanishing."
+  ],
+  3: [
+    "The Crimson Sentinel descended from storm-wracked skies.",
+    "Its T-shaped visor glowed with malevolent red light.",
+    "Energy blasts erupted from its gauntlets, devastating the outpost.",
+    "Warriors fought bravely but were outmatched by the enforcer.",
+    "From the Citadel, AVAXIM watched the destructive advance.",
+    "It seeks not just to conquer, but to break our spirit.",
+    "Then it will fail, the Emperor declared with cold fire.",
+    "He rose from his throne, power surging around him.",
+    "Prepare the defenses. The Emperor is going to war."
+  ],
+  4: [
+    "In the depths of a fractured laboratory, Dr. Malgrave plotted.",
+    "His cold calculations had found weakness in Avalora's defenses.",
+    "The network's harmony could be turned into discord.",
+    "With surgical precision, he began his digital assault.",
+    "Each strike was calculated, methodical, devastating.",
+    "The very foundations of reality began to crack.",
+    "But even the best plans have unexpected variables.",
+    "And AVALORA had guardians Dr. Malgrave had not accounted for."
+  ],
+  5: [
+    "The final confrontation approached as all forces converged.",
+    "Heroes and villains, order and chaos, all would be decided.",
+    "In the heart of the Avaland Citadel, the ultimate battle began.",
+    "The fate of the eternal winter realm hung in the balance.",
+    "Would AVALORA survive, or would darkness consume all?",
+    "Only the bravest warriors could determine the outcome.",
+    "The legend of AVALORA would be written in this moment.",
+    "Victory or defeat - everything depended on you."
+  ]
 }
 
 const chapters: Chapter[] = [
@@ -36,16 +114,33 @@ const chapters: Chapter[] = [
     description: 'The beginning of your journey in AVALORA',
     videoIntro: '/QuestAssets/Chapter0/Chapter0Intro.mp4',
     completed: false,
-    unlocked: true
+    unlocked: true,
+    comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    unlockCost: 0,
+    storyText: chapterStories[0],
+    battles: [
+      {
+        id: 1,
+        type: 'typing',
+        challenge: 'Type: AVALORA',
+        answer: 'AVALORA',
+        reward: { gems: 10, xp: 20 },
+        hero: '/Artworks-Characters/AVALANCH.png',
+        villain: '/VillainAssets/MeronDevil.jpg',
+        timeLimit: 30
+      }
+    ]
   },
   {
     id: 1,
     title: 'Chapter 1: The Crimson Realm',
-    description: 'Enter the eternal winter of AVALORA and face your first challenge',
+    description: 'Enter the eternal winter and face your first challenge',
     videoIntro: '/QuestAssets/Chapter1/Chapter1Intro.mp4',
     completed: false,
     unlocked: false,
     comicPages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    unlockCost: 100,
+    storyText: chapterStories[1],
     battles: [
       {
         id: 1,
@@ -317,6 +412,8 @@ export default function QuestPage() {
           )}
         </AnimatePresence>
 
+        <SimpleNav currentPage="Quest Chronicles" />
+        
         <div className="container mx-auto px-4 py-8 relative z-10">
           {/* Header */}
           <motion.div
@@ -479,67 +576,110 @@ export default function QuestPage() {
   // Comic Phase
   if (gamePhase === 'comic' && chapter?.comicPages) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
+      <div className="min-h-screen bg-black flex flex-col relative overflow-hidden">
         {/* Paper texture overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-amber-50/5 to-yellow-100/5" />
         
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-4xl mx-4 relative"
-        >
-          {/* Comic Panel */}
-          <div className="bg-white rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-            {/* Manga-style border */}
-            <div className="absolute inset-2 border-4 border-black rounded-xl" />
+        {/* Fixed Navigation Header */}
+        <div className="sticky top-0 z-50 bg-black/90 backdrop-blur-sm border-b border-gray-600 p-4">
+          <div className="flex justify-between items-center max-w-4xl mx-auto">
+            <motion.button
+              onClick={() => setGamePhase('home')}
+              className="flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              whileHover={{ scale: 1.05 }}
+            >
+              ← Exit Comic
+            </motion.button>
             
-            {/* Comic Image */}
-            <div className="relative z-10 mb-6">
-              <Image
-                src={`/QuestAssets/Chapter1/${chapter.comicPages[currentComicPage]}.png`}
-                alt={`Comic Page ${currentComicPage + 1}`}
-                width={800}
-                height={600}
-                className="w-full h-auto rounded-lg"
-              />
+            <div className="text-white font-bold">
+              Page {currentComicPage + 1} / {chapter.comicPages.length}
             </div>
-
-            {/* Story Text */}
-            <div className="relative z-10 bg-white/90 p-6 rounded-lg border-2 border-black">
-              <p className="text-lg text-black leading-relaxed font-serif">
-                {chapter1Story[currentComicPage] || "The story continues..."}
-              </p>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex justify-between items-center mt-6 relative z-10">
+            
+            <div className="flex space-x-2">
               <motion.button
                 onClick={prevComicPage}
                 disabled={currentComicPage === 0}
-                className="flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-gray-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
-                <ChevronLeft className="w-5 h-5 mr-1" />
-                Previous
+                <ChevronLeft className="w-5 h-5" />
               </motion.button>
-
-              <div className="text-black font-bold">
-                {currentComicPage + 1} / {chapter.comicPages.length}
-              </div>
-
+              
               <motion.button
                 onClick={nextComicPage}
-                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
-                {currentComicPage === chapter.comicPages.length - 1 ? 'Finish' : 'Next'}
-                <ChevronRight className="w-5 h-5 ml-1" />
+                <ChevronRight className="w-5 h-5" />
               </motion.button>
             </div>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Scrollable Comic Content */}
+        <div className="flex-1 overflow-y-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-4xl mx-auto p-4"
+          >
+            {/* Comic Panel */}
+            <div className="bg-white rounded-2xl p-8 shadow-2xl relative overflow-hidden mb-8">
+              {/* Manga-style border */}
+              <div className="absolute inset-2 border-4 border-black rounded-xl" />
+              
+              {/* Comic Image - Full viewport optimized */}
+              <div className="relative z-10 mb-6">
+                <div className="relative w-full" style={{ aspectRatio: '4/3' }}>
+                  <Image
+                    src={`/QuestAssets/Chapter1/${chapter.comicPages[currentComicPage]}.png`}
+                    alt={`Comic Page ${currentComicPage + 1}`}
+                    fill
+                    className="object-contain rounded-lg"
+                    priority
+                  />
+                </div>
+              </div>
+
+              {/* Story Text */}
+              <div className="relative z-10 bg-white/90 p-6 rounded-lg border-2 border-black">
+                <p className="text-lg text-black leading-relaxed font-serif">
+                  {chapter1Story[currentComicPage] || "The story continues..."}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Fixed Bottom Navigation */}
+        <div className="sticky bottom-0 z-50 bg-black/90 backdrop-blur-sm border-t border-gray-600 p-4">
+          <div className="flex justify-between items-center max-w-4xl mx-auto">
+            <motion.button
+              onClick={prevComicPage}
+              disabled={currentComicPage === 0}
+              className="flex items-center px-6 py-3 bg-gray-800 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ChevronLeft className="w-5 h-5 mr-2" />
+              Previous
+            </motion.button>
+
+            <div className="text-white font-bold text-lg">
+              {currentComicPage + 1} / {chapter.comicPages.length}
+            </div>
+
+            <motion.button
+              onClick={nextComicPage}
+              className="flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {currentComicPage === chapter.comicPages.length - 1 ? 'Finish' : 'Next'}
+              <ChevronRight className="w-5 h-5 ml-2" />
+            </motion.button>
+          </div>
+        </div>
 
         {/* Page turn effect */}
         <div className="absolute inset-0 pointer-events-none">

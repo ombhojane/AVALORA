@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useGame } from '@/app/providers'
+import SimpleNav from '@/components/navigation/SimpleNav'
 import { ShoppingBag, Gem, Star, Filter, Sparkles } from 'lucide-react'
 import Image from 'next/image'
 
@@ -121,6 +122,8 @@ export default function MarketplacePage() {
         }} />
       </div>
 
+      <SimpleNav currentPage="Marketplace" />
+      
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header */}
         <motion.div

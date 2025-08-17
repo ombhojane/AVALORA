@@ -6,39 +6,57 @@ import { Sword, Target, ShoppingBag, Trophy, User, BookOpen } from 'lucide-react
 const features = [
   {
     icon: Sword,
-    title: 'Epic Quests',
-    description: 'Journey through comic-style story chapters filled with adventure and mystery.',
-    color: 'from-red-500 to-red-700'
+    title: '伝説の冒険',
+    subtitle: 'Epic Quests',
+    description: 'Journey through comic-style story chapters filled with adventure and mystery in the eternal winter realm.',
+    color: 'from-red-500 to-red-700',
+    bgImage: '/WebsiteAssets/MiniSword.png',
+    accent: 'border-red-400 shadow-red-500/30'
   },
   {
     icon: Target,
-    title: 'Training Grounds',
-    description: 'Master your typing skills and learn Web3 concepts through engaging challenges.',
-    color: 'from-blue-500 to-blue-700'
+    title: '修行道場',
+    subtitle: 'Training Dojo',
+    description: 'Master your combat skills and learn Web3 concepts through engaging challenges and battles.',
+    color: 'from-blue-500 to-blue-700',
+    bgImage: '/WebsiteAssets/MiniFlash.png',
+    accent: 'border-blue-400 shadow-blue-500/30'
   },
   {
     icon: ShoppingBag,
-    title: 'Marketplace',
-    description: 'Trade cosmetics, avatars, and rare items with other players using gems.',
-    color: 'from-green-500 to-green-700'
+    title: '商人の市場',
+    subtitle: 'Mystic Marketplace',
+    description: 'Trade legendary items, avatars, and rare artifacts with warriors using precious gems.',
+    color: 'from-green-500 to-green-700',
+    bgImage: '/WebsiteAssets/CrystalGroup.png',
+    accent: 'border-green-400 shadow-green-500/30'
   },
   {
     icon: Trophy,
-    title: 'Leaderboards',
-    description: 'Compete with players worldwide and climb the ranks to become a legend.',
-    color: 'from-yellow-500 to-yellow-700'
+    title: '栄光の階級',
+    subtitle: 'Honor Rankings',
+    description: 'Compete with warriors worldwide and climb the ranks to become a legendary champion.',
+    color: 'from-yellow-500 to-yellow-700',
+    bgImage: '/BadgeAssets/SpartanAttack.png',
+    accent: 'border-yellow-400 shadow-yellow-500/30'
   },
   {
     icon: User,
-    title: 'Character Customization',
-    description: 'Personalize your avatar with unique outfits, skins, and accessories.',
-    color: 'from-purple-500 to-purple-700'
+    title: '戦士の姿',
+    subtitle: 'Warrior Identity',
+    description: 'Forge your unique identity with legendary outfits, mystical skins, and powerful accessories.',
+    color: 'from-purple-500 to-purple-700',
+    bgImage: '/WebsiteAssets/UnknownNamePlateCard.png',
+    accent: 'border-purple-400 shadow-purple-500/30'
   },
   {
     icon: BookOpen,
-    title: 'Web3 Learning',
-    description: 'Earn while you learn about Avalanche blockchain and cryptocurrency.',
-    color: 'from-indigo-500 to-indigo-700'
+    title: '知識の書',
+    subtitle: 'Blockchain Codex',
+    description: 'Unlock the secrets of Avalanche blockchain and cryptocurrency through ancient wisdom.',
+    color: 'from-indigo-500 to-indigo-700',
+    bgImage: '/WebsiteAssets/KeysandLock.png',
+    accent: 'border-indigo-400 shadow-indigo-500/30'
   }
 ]
 
@@ -76,46 +94,62 @@ export function FeaturesSection() {
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 50, rotateY: -15 }}
-              whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
+              initial={{ opacity: 0, y: 50, rotateX: 15 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ 
-                scale: 1.05, 
-                rotateY: 5,
+                scale: 1.03, 
+                y: -10,
                 transition: { duration: 0.3 }
               }}
-              className="manga-border bg-black bg-opacity-70 backdrop-blur-sm p-8 hover:bg-opacity-80 transition-all duration-300 group relative overflow-hidden"
+              className={`relative bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-lg rounded-2xl p-8 border-2 ${feature.accent} shadow-2xl hover:shadow-3xl transition-all duration-500 group overflow-hidden`}
             >
-              {/* Manga-style corner decoration */}
-              <div className="absolute top-2 left-2 w-8 h-8 border-l-4 border-t-4 border-avalanche-red opacity-60" />
-              <div className="absolute bottom-2 right-2 w-8 h-8 border-r-4 border-b-4 border-avalanche-red opacity-60" />
+              {/* Background decoration image */}
+              <div className="absolute top-4 right-4 w-16 h-16 opacity-10 group-hover:opacity-20 transition-opacity duration-300">
+                <img src={feature.bgImage} alt="" className="w-full h-full object-contain" />
+              </div>
 
-              {/* Background glow effect */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
+              {/* Manga-style corner decorations */}
+              <div className="absolute top-3 left-3 w-8 h-8 border-l-3 border-t-3 border-current opacity-60" />
+              <div className="absolute bottom-3 right-3 w-8 h-8 border-r-3 border-b-3 border-current opacity-60" />
+
+              {/* Anime glow effect */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-15 transition-opacity duration-500 rounded-2xl`} />
               
-              <div className="relative z-10 text-center">
-                <div className={`w-20 h-20 rounded-full bg-gradient-to-r ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto shadow-lg`}>
-                  <feature.icon className="w-10 h-10 text-white" />
+              {/* Speed lines effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none">
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-current to-transparent transform -rotate-12" />
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-current to-transparent transform rotate-12" />
+              </div>
+              
+              <div className="relative z-10">
+                {/* Icon with anime-style background */}
+                <div className="flex justify-center mb-6">
+                  <div className={`relative w-20 h-20 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg border-2 border-white/20`}>
+                    <feature.icon className="w-10 h-10 text-white drop-shadow-lg" />
+                    {/* Shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
                 </div>
                 
-                <h3 className="text-2xl font-manga font-bold text-white mb-4 group-hover:text-avalanche-red transition-colors duration-300">
-                  {feature.title}
-                </h3>
+                {/* Dual language titles */}
+                <div className="text-center mb-4">
+                  <h3 className="text-2xl font-manga font-bold text-white mb-1 group-hover:text-current transition-colors duration-300">
+                    {feature.subtitle}
+                  </h3>
+                  <div className="text-sm text-gray-400 font-semibold mb-1">
+                    {feature.title}
+                  </div>
+                </div>
                 
-                <p className="text-gray-300 leading-relaxed text-sm">
+                <p className="text-gray-300 leading-relaxed text-sm text-center group-hover:text-gray-200 transition-colors duration-300">
                   {feature.description}
                 </p>
 
-                {/* Manga-style action lines */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none">
-                  <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-avalanche-red to-transparent transform -rotate-12" />
-                  <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-avalanche-red to-transparent transform rotate-12" />
-                </div>
+                {/* Manga speech bubble tail */}
+                <div className="absolute -bottom-2 left-8 w-4 h-4 bg-current rotate-45 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
               </div>
-
-              {/* Manga-style speech bubble effect */}
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-black rotate-45 opacity-0 group-hover:opacity-70 transition-opacity duration-300" />
             </motion.div>
           ))}
         </div>

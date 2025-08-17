@@ -1,14 +1,15 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { HeroSection } from '@/components/landing/HeroSection'
 import { LoreSection } from '@/components/landing/LoreSection'
+import { AboutSection } from '@/components/landing/AboutSection'
 import { FeaturesSection } from '@/components/landing/FeaturesSection'
 import { ArtworkSection } from '@/components/landing/ArtworkSection'
 import { JoinSection } from '@/components/landing/JoinSection'
+import { AnimeFooter } from '@/components/landing/AnimeFooter'
 import BackToTop from '@/components/BackToTop'
 
 if (typeof window !== 'undefined') {
@@ -23,7 +24,7 @@ export default function Home() {
       // Initialize GSAP animations
       const ctx = gsap.context(() => {
         // Smooth scrolling animations
-        gsap.utils.toArray('.scroll-section').forEach((section: any, i) => {
+        gsap.utils.toArray('.scroll-section').forEach((section: any) => {
           gsap.fromTo(section, 
             { opacity: 0, y: 100 },
             {
@@ -49,9 +50,11 @@ export default function Home() {
     <div ref={containerRef} className="min-h-screen">
       <HeroSection />
       <LoreSection />
+      <AboutSection />
       <FeaturesSection />
       <ArtworkSection />
       <JoinSection />
+      <AnimeFooter />
       <BackToTop />
     </div>
   )

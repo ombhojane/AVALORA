@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGame } from '@/app/providers'
+import SimpleNav from '@/components/navigation/SimpleNav'
 import { Target, Clock, Zap, BookOpen, Trophy, Star, Flame, Shield, Sword, Award, ChevronRight, Lock, CheckCircle, Play, Pause, RotateCcw } from 'lucide-react'
 import Image from 'next/image'
 
@@ -291,6 +292,8 @@ export default function TrainingPage() {
         )}
       </AnimatePresence>
 
+      <SimpleNav currentPage="Training & Literacy" />
+      
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header */}
         <motion.div
@@ -299,10 +302,10 @@ export default function TrainingPage() {
           className="text-center mb-8"
         >
           <h1 className="text-6xl font-manga font-bold text-white mb-4">
-            <span className="smoky-text">Training Dojo</span>
+            <span className="smoky-text">Training & Literacy</span>
           </h1>
           <p className="text-xl text-gray-300">
-            Master your skills in the ultimate training arena
+            Master combat skills and expand your knowledge in the ultimate dojo
           </p>
         </motion.div>
 
