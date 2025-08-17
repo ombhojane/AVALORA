@@ -145,7 +145,7 @@ const chapters: Chapter[] = [
       {
         id: 1,
         type: 'jumble',
-        challenge: 'HCNALAVA',
+        challenge: 'HCNALAVAE',
         answer: 'AVALANCHE',
         reward: { gems: 15, xp: 30 },
         hero: '/Artworks-Characters/AVALANCH.png',
@@ -373,7 +373,17 @@ export default function QuestPage() {
   const { gameState, updateGameState } = useGame()
   const router = useRouter()
 
-  const chapter = chapters[currentChapter]
+  // Initialize chapters with progress from global state
+  const getChapterProgress = () => {
+    return chapters.map(chapter => ({
+      ...chapter,
+      completed: gameState.questProgress.completedChapters.includes(chapter.id),
+      unlocked: gameState.questProgress.unlockedChapters.includes(chapter.id)
+    }))
+  }
+
+  const chaptersWithProgress = getChapterProgress()
+  const chapter = chaptersWithProgress[currentChapter]
   const battle = chapter?.battles?.[currentBattle]
 
   useEffect(() => {
@@ -410,14 +420,27 @@ export default function QuestPage() {
     if (chapter?.comicPages && currentComicPage < chapter.comicPages.length - 1) {
       setCurrentComicPage(currentComicPage + 1)
     } else {
-      // Comic finished
+      // Comic finished - mark chapter as completed in global state
       setGamePhase('home')
-      chapter!.completed = true
       
-      // Special handling for Chapter 0 - unlock Chapter 1
-      if (currentChapter === 0) {
-        chapters[1].unlocked = true
+      // Update global state with chapter completion
+      const isAlreadyCompleted = gameState.questProgress.completedChapters.includes(currentChapter)
+      const isChapter1Unlocked = gameState.questProgress.unlockedChapters.includes(1)
+      
+      const updatedQuestProgress = {
+        ...gameState.questProgress,
+        completedChapters: isAlreadyCompleted 
+          ? gameState.questProgress.completedChapters 
+          : [...gameState.questProgress.completedChapters, currentChapter],
+        unlockedChapters: (currentChapter === 0 && !isChapter1Unlocked)
+          ? [...gameState.questProgress.unlockedChapters, 1]
+          : gameState.questProgress.unlockedChapters
       }
+      
+      updateGameState({
+        ...gameState,
+        questProgress: updatedQuestProgress
+      })
     }
   }
 
@@ -513,10 +536,22 @@ export default function QuestPage() {
       setTimeLeft(chapter.battles[currentBattle + 1]?.timeLimit || 30)
       setIsActive(true)
     } else {
-      // All battles completed, unlock next chapter
-      if (currentChapter < chapters.length - 1) {
-        chapters[currentChapter + 1].unlocked = true
+      // All battles completed, unlock next chapter in global state
+      const nextChapterId = currentChapter + 1
+      const isNextChapterUnlocked = gameState.questProgress.unlockedChapters.includes(nextChapterId)
+      
+      const updatedQuestProgress = {
+        ...gameState.questProgress,
+        unlockedChapters: (currentChapter < chapters.length - 1 && !isNextChapterUnlocked)
+          ? [...gameState.questProgress.unlockedChapters, nextChapterId]
+          : gameState.questProgress.unlockedChapters
       }
+      
+      updateGameState({
+        ...gameState,
+        questProgress: updatedQuestProgress
+      })
+      
       setGamePhase('home')
       setCurrentBattle(0)
     }
@@ -637,7 +672,7 @@ export default function QuestPage() {
 
           {/* Chapter Selection */}
           <div className="grid gap-6 max-w-4xl mx-auto">
-            {chapters.map((chap, index) => (
+            {chaptersWithProgress.map((chap, index) => (
               <motion.div
                 key={chap.id}
                 initial={{ opacity: 0, y: 20 }}
