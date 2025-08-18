@@ -1,54 +1,85 @@
+// app/components/PrivyProviderWrapper.tsx
 'use client';
 
-import { PrivyProvider } from '@privy-io/react-auth';
+import React, { useEffect, useState } from 'react';
+import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
 import { avalanche, avalancheFuji } from 'viem/chains';
+import { useRouter } from 'next/navigation';
 
-export default function PrivyProviderWrapper({ children }: { children: React.ReactNode }) {
+function AutoRedirectOnLogin() {
+  const { ready, authenticated } = usePrivy();
+  const router = useRouter();
+  const [didRedirect, setDidRedirect] = useState(false);
+
+  useEffect(() => {
+    // Wait until Privy is initialized
+    if (!ready) return;
+
+    // When a user becomes authenticated, redirect once
+    if (authenticated && !didRedirect) {
+      setDidRedirect(true);
+      // push to dashboard (Next.js app router)
+      router.push('/dashboard');
+    }
+  }, [ready, authenticated, didRedirect, router]);
+
+  return null; // no UI — purely side-effect
+}
+
+export default function PrivyProviderWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+      // optional clientId if you're using app clients in Dashboard
+      // clientId={process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID}
       config={{
-        // Set Avalanche as default chain
+        // Default and supported EVM chains
         defaultChain: avalanche,
-        // Support both Avalanche mainnet and testnet
         supportedChains: [avalanche, avalancheFuji],
-        
-        // Disable automatic wallet creation completely
+
+        // Embedded wallet settings
         embeddedWallets: {
           ethereum: {
-            createOnLogin: 'none', // Disable automatic creation
-            noPromptOnSignature: true,
-          }
+            createOnLogin: 'off', // 'all-users' | 'users-without-wallets' | 'off'
+            // showWalletUIs: false, // uncomment to suppress confirmation modals globally
+          },
         },
-        
-        // Customize appearance to prioritize Google login
+
+        // Appearance & ordering of wallets shown in the modal
         appearance: {
           theme: 'light',
           landingHeader: 'Welcome to Avalora',
-          loginMessage: 'Connect to Avalanche ecosystem with your preferred method',
-          showWalletLoginFirst: false, // Show social logins first
-          accentColor: '#dc2626', // Red accent to match Avalanche theme
-        },
-        
-        // Prioritize Google login, then wallets, then email
-        loginMethods: ['google', 'wallet', 'email'],
-        
-        // Enable specific wallet connectors
-        walletConnectors: {
-          metamask: { enabled: true },
-          coinbaseWallet: { enabled: true },
-          rainbow: { enabled: true },
-          walletConnect: { enabled: true },
+          loginMessage:
+            'Connect to the Avalanche ecosystem with your preferred method',
+          showWalletLoginFirst: false,
+          accentColor: '#dc2626',
+          walletList: [
+            'metamask',
+            'rainbow',
+            'wallet_connect',
+            'coinbase_wallet',
+          ],
         },
 
-        // Enhanced wallet creation settings
-        defaultWallet: 'privy', // Prefer embedded wallet
-        supportedWallets: ['privy', 'metamask', 'coinbase', 'rainbow', 'walletconnect'],
-        
-        // Auto-redirect after login
-        redirectUrl: typeof window !== 'undefined' ? `${window.location.origin}/dashboard` : undefined,
+        // Which login methods to show (socials, wallet, email, etc.)
+        loginMethods: ['google', 'wallet', 'email'],
+
+        // Per-external-wallet config (example)
+        externalWallets: {
+          coinbaseWallet: {
+            connectionOptions: 'all', // 'all' | 'eoaOnly' | 'smartWalletOnly'
+          },
+        },
+
+        // other valid config keys can go here...
       }}
     >
+      {/* put redirect handler inside provider so usePrivy() is available */}
+      <AutoRedirectOnLogin />
       {children}
     </PrivyProvider>
   );

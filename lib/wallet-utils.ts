@@ -59,7 +59,7 @@ export const formatBalance = (balanceWei: string, decimals: number = 18): string
     const wholePart = balance / divisor;
     const fractionalPart = balance % divisor;
     
-    if (fractionalPart === 0n) {
+    if (fractionalPart === BigInt(0)) {
       return wholePart.toString();
     }
     
