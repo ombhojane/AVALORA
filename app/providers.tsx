@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import PrivyProviderWrapper from '@/components/providers/privy-provider'
 
 interface GameState {
@@ -55,11 +55,32 @@ const initialGameState: GameState = {
 function GameProvider({ children }: { children: ReactNode }) {
   const [gameState, setGameState] = useState<GameState>(initialGameState)
 
+  // Load game state from localStorage on component mount
+  useEffect(() => {
+    const savedGameState = localStorage.getItem('avaloraGameState')
+    if (savedGameState) {
+      try {
+        const parsedState = JSON.parse(savedGameState)
+        setGameState(parsedState)
+        console.log('Loaded game state from localStorage:', parsedState)
+      } catch (error) {
+        console.error('Error loading game state from localStorage:', error)
+        // If there's an error parsing, start with initial state
+        setGameState(initialGameState)
+      }
+    }
+  }, [])
+
   const updateGameState = (updates: Partial<GameState>) => {
     console.log('updateGameState called with:', updates)
     setGameState(prev => {
       const newState = { ...prev, ...updates }
       console.log('Game state updated from:', prev, 'to:', newState)
+      
+      // Save to localStorage
+      localStorage.setItem('avaloraGameState', JSON.stringify(newState))
+      console.log('Game state saved to localStorage')
+      
       return newState
     })
   }
@@ -73,12 +94,17 @@ function GameProvider({ children }: { children: ReactNode }) {
         player: { ...prev.player, ...playerData }
       }
       console.log('Game state updated:', newState)
+      
+      // Save to localStorage
+      localStorage.setItem('avaloraGameState', JSON.stringify(newState))
+      
       return newState
     })
   }
 
   const logout = () => {
     setGameState(initialGameState)
+    localStorage.removeItem('avaloraGameState')
   }
 
   return (

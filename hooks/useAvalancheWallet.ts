@@ -23,25 +23,32 @@ export const useAvalancheWallet = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Get the primary wallet (embedded wallet preferred)
+  // Get the primary wallet (embedded wallet preferred, like backend)
   const getPrimaryWallet = useCallback(() => {
-    // For direct wallet connections, use the first wallet
-    if (wallets.length > 0) {
-      return wallets[0];
-    }
+    if (wallets.length === 0) return null;
     
-    return null;
+    // Prefer embedded wallet (like backend logic)
+    const embeddedWallet = wallets.find(wallet => wallet.walletClientType === 'privy');
+    const externalWallet = wallets.find(wallet => wallet.walletClientType !== 'privy');
+    
+    return embeddedWallet || externalWallet || wallets[0];
   }, [wallets]);
 
   // Fetch AVAX balance for a given address
   const fetchBalance = useCallback(async (address: string, chainId: string): Promise<string> => {
+    console.log('fetchBalance called with:', { address, chainId });
+    
     try {
       const networkInfo = getNetworkInfo(chainId);
+      console.log('Network info:', networkInfo);
+      
       if (!networkInfo) {
-        throw new Error('Unsupported network');
+        console.error('Unsupported network for chainId:', chainId);
+        throw new Error(`Unsupported network: ${chainId}`);
       }
 
       // Try the primary RPC endpoint
+      console.log('Trying primary RPC:', networkInfo.rpcUrl);
       try {
         const response = await fetch(networkInfo.rpcUrl, {
           method: 'POST',
@@ -57,17 +64,25 @@ export const useAvalancheWallet = () => {
         });
 
         const data = await response.json();
+        console.log('RPC response:', data);
         
         if (data.error) {
+          console.error('RPC error:', data.error);
           throw new Error(data.error.message);
         }
 
-        return formatAVAXBalance(data.result);
+        const formattedBalance = formatAVAXBalance(data.result);
+        console.log('Formatted balance:', formattedBalance);
+        return formattedBalance;
       } catch (primaryError) {
+        console.warn('Primary RPC failed, trying fallback:', primaryError);
+        
         // Fallback to Avalanche's official RPC
         const fallbackUrl = chainId.includes('43114') 
           ? 'https://api.avax.network/ext/bc/C/rpc'
           : 'https://api.avax-test.network/ext/bc/C/rpc';
+          
+        console.log('Trying fallback RPC:', fallbackUrl);
           
         const fallbackResponse = await fetch(fallbackUrl, {
           method: 'POST',
@@ -83,12 +98,16 @@ export const useAvalancheWallet = () => {
         });
 
         const fallbackData = await fallbackResponse.json();
+        console.log('Fallback RPC response:', fallbackData);
         
         if (fallbackData.error) {
+          console.error('Fallback RPC error:', fallbackData.error);
           throw new Error(fallbackData.error.message);
         }
 
-        return formatAVAXBalance(fallbackData.result);
+        const fallbackBalance = formatAVAXBalance(fallbackData.result);
+        console.log('Fallback formatted balance:', fallbackBalance);
+        return fallbackBalance;
       }
     } catch (error) {
       console.error('Failed to fetch balance:', error);
@@ -109,8 +128,10 @@ export const useAvalancheWallet = () => {
     try {
       const address = wallet.address;
       const chainId = wallet.chainId;
-      // For direct wallet connections, they're not embedded
-      const isEmbedded = false;
+      // Check if wallet is embedded
+      const isEmbedded = wallet.walletClientType === 'privy';
+
+      console.log('Getting wallet info for:', { address, chainId, isEmbedded, walletClientType: wallet.walletClientType });
 
       // Get network information
       const networkInfo = getNetworkInfo(chainId);
@@ -129,7 +150,9 @@ export const useAvalancheWallet = () => {
       }
 
       // Fetch balance
+      console.log('Fetching balance for address:', address, 'on chain:', chainId);
       const balance = await fetchBalance(address, chainId);
+      console.log('Balance fetched:', balance);
       const balanceFormatted = `${balance} AVAX`;
 
       const info: WalletInfo = {
@@ -154,14 +177,18 @@ export const useAvalancheWallet = () => {
     }
   }, [getPrimaryWallet, fetchBalance]);
 
-  // Auto-refresh wallet info when wallet changes
+  // Auto-refresh wallet info when wallet changes or becomes ready
   useEffect(() => {
+    console.log('useAvalancheWallet effect:', { ready, authenticated, walletsCount: wallets.length, wallets });
+    
     if (ready && authenticated && wallets.length > 0) {
+      console.log('Conditions met, calling getWalletInfo');
       getWalletInfo();
     } else {
+      console.log('Conditions not met, clearing wallet info');
       setWalletInfo(null);
     }
-  }, [ready, authenticated, wallets.length]);
+  }, [ready, authenticated, wallets, getWalletInfo]);
 
   // Refresh balance manually
   const refreshBalance = useCallback(async () => {

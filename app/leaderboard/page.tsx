@@ -17,15 +17,15 @@ interface Player {
 
 const leaderboardData: Player[] = [
   { id: 1, name: '雪の皇帝 (Snow Emperor)', level: 25, xp: 12500, gems: 2500, avatar: '/Artworks-Characters/AVALANCH.png', rank: 1 },
-  { id: 2, name: 'CryptoSensei', level: 23, xp: 11200, gems: 2200, avatar: '/Artworks-Characters/MainCharacter.png', rank: 2 },
+  { id: 2, name: 'CryptoSensei', level: 23, xp: 11200, gems: 2200, avatar: '/Artworks-Characters/AVALANCH.png', rank: 2 },
   { id: 3, name: 'BlockchainRonin', level: 22, xp: 10800, gems: 2100, avatar: '/Artworks-Characters/AVALANCH.png', rank: 3 },
-  { id: 4, name: 'DigitalShogun', level: 20, xp: 9500, gems: 1900, avatar: '/Artworks-Characters/MainCharacter.png', rank: 4 },
+  { id: 4, name: 'DigitalShogun', level: 20, xp: 9500, gems: 1900, avatar: '/Artworks-Characters/AVALANCH.png', rank: 4 },
   { id: 5, name: 'Web3Samurai', level: 19, xp: 9200, gems: 1800, avatar: '/Artworks-Characters/AVALANCH.png', rank: 5 },
-  { id: 6, name: 'AvaxNinja', level: 18, xp: 8800, gems: 1700, avatar: '/Artworks-Characters/MainCharacter.png', rank: 6 },
+  { id: 6, name: 'AvaxNinja', level: 18, xp: 8800, gems: 1700, avatar: '/Artworks-Characters/AVALANCH.png', rank: 6 },
   { id: 7, name: 'TypeMaster閃', level: 17, xp: 8200, gems: 1600, avatar: '/Artworks-Characters/AVALANCH.png', rank: 7 },
-  { id: 8, name: 'QuizChampion', level: 16, xp: 7800, gems: 1500, avatar: '/Artworks-Characters/MainCharacter.png', rank: 8 },
+  { id: 8, name: 'QuizChampion', level: 16, xp: 7800, gems: 1500, avatar: '/Artworks-Characters/AVALANCH.png', rank: 8 },
   { id: 9, name: 'CodeBreaker影', level: 15, xp: 7200, gems: 1400, avatar: '/Artworks-Characters/AVALANCH.png', rank: 9 },
-  { id: 10, name: 'ChainGuardian', level: 14, xp: 6800, gems: 1300, avatar: '/Artworks-Characters/MainCharacter.png', rank: 10 }
+  { id: 10, name: 'ChainGuardian', level: 14, xp: 6800, gems: 1300, avatar: '/Artworks-Characters/AVALANCH.png', rank: 10 }
 ]
 
 const getRankIcon = (rank: number) => {
