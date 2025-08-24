@@ -218,7 +218,8 @@ npm start
 
 ### 2. **Authentication**
 - **Anime-styled Modal**: Beautiful login/signup interface
-- **Wallet Integration**: Connect with MetaMask (mock implementation)
+- **Wallet Integration**: Connected with MetaMask
+- **Proper Validation**: Connected with the AVAX - AVALANCHE Network Chain
 - **Smooth Transitions**: Anime-themed page transitions
 
 ### 3. **Game Hub (Dashboard)**
@@ -233,12 +234,13 @@ npm start
   - Typing challenges (speed and accuracy)
   - Word jumble puzzles
   - Web3/Avalanche trivia
-- **Reward System**: Earn gems and XP for victories
+  - More Battle Inspired Mini-Challenges Coming Soon....
+- **Reward System**: Earn Gems for completing quests, challenges, battles and victories
 - **Consequence System**: Lose HP for defeats
 
 ### 5. **Training Grounds**
 - **Typing Practice**: Improve WPM and accuracy
-- **Web3 Education**: Learn about Avalanche and blockchain
+- **Web3 Education**: Learn about AVALANCHE, WEB3, Smart Contracts & Blockchain
 - **Progress Tracking**: Monitor skill development
 
 ### 6. **Marketplace**
